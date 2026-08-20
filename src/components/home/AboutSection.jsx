@@ -29,7 +29,7 @@ const AboutSection = () => {
           variants={{ visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}
         >
           <Box sx={{ textAlign: 'center', mb: 6 }}>
-            <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: 4, display: 'block', mb: 1 }}>
+            <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: '0.14em', display: 'block', mb: 1 }}>
               Welcome to
             </Typography>
             <Typography variant="h2">Dominion City</Typography>

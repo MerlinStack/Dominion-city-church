@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Container, Typography, Button, Grid, Stack, TextField, IconButton } from '@mui/material';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import Seo from '../components/common/Seo';
 import { MapPin, Phone, Mail, Clock, Globe, Camera, Video, MessageCircle, Send } from 'lucide-react';
 import { toast } from 'react-toastify';
 
@@ -27,10 +27,11 @@ const Contact = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Contact Us | Dominion City</title>
-        <meta name="description" content="Contact Dominion City for prayer requests, questions, or to connect with any of our branches." />
-      </Helmet>
+      <Seo
+        path="/contact"
+        title="Contact Us | Dominion City"
+        description="Contact Dominion City for prayer requests, questions, or to connect with any of our branches."
+      />
       <Box sx={{ pt: '80px' }}>
         <Box sx={{ py: { xs: 8, md: 12 }, textAlign: 'center', background: (theme) =>
           theme.palette.mode === 'dark' ? 'linear-gradient(135deg, #000000, #1E3A8A)' : 'linear-gradient(135deg, #F8FAFC, #E8F0FE)',
@@ -95,7 +96,7 @@ const Contact = () => {
         <Box sx={{ py: { xs: 6, md: 10 } }}>
           <Container maxWidth="lg">
             <Box sx={{ textAlign: 'center', mb: 6 }}>
-              <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: 4, display: 'block', mb: 1 }}>Find Us</Typography>
+              <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: '0.14em', display: 'block', mb: 1 }}>Find Us</Typography>
               <Typography variant="h2">Our Branches</Typography>
               <Typography variant="body1" sx={{ color: 'text.secondary' }}>Worship with us at any of our locations near you</Typography>
             </Box>

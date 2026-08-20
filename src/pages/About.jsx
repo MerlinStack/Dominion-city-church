@@ -4,7 +4,7 @@ import {
   Box, Container, Typography, Button, Grid, alpha,
 } from '@mui/material';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import Seo from '../components/common/Seo';
 import { BookOpen, Cross, Bird, Heart, Church, Crown } from 'lucide-react';
 
 const timelineEvents = [
@@ -27,10 +27,11 @@ const beliefs = [
 const About = () => {
   return (
     <>
-      <Helmet>
-        <title>About Us | Dominion City</title>
-        <meta name="description" content="Learn about Dominion City's history, our beliefs, and the vision God gave Dr. David Ogbueli." />
-      </Helmet>
+      <Seo
+        path="/about"
+        title="About Us | Dominion City"
+        description="Learn about Dominion City's history, our beliefs, and the vision God gave Dr. David Ogbueli."
+      />
       <Box sx={{ pt: '80px' }}>
         <Box sx={{ py: { xs: 8, md: 12 }, textAlign: 'center', background: (theme) =>
           theme.palette.mode === 'dark'
@@ -52,7 +53,7 @@ const About = () => {
         <Box sx={{ py: { xs: 8, md: 12 } }}>
           <Container maxWidth="md">
             <Box sx={{ textAlign: 'center', mb: 8 }}>
-              <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: 4, display: 'block', mb: 1 }}>
+              <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: '0.14em', display: 'block', mb: 1 }}>
                 Our History
               </Typography>
               <Typography variant="h2">How It All Began</Typography>
@@ -109,7 +110,7 @@ const About = () => {
         <Box sx={{ py: { xs: 8, md: 12 } }}>
           <Container maxWidth="lg">
             <Box sx={{ textAlign: 'center', mb: 6 }}>
-              <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: 4, display: 'block', mb: 1 }}>
+              <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: '0.14em', display: 'block', mb: 1 }}>
                 What We Believe
               </Typography>
               <Typography variant="h2">Our Statement of Faith</Typography>

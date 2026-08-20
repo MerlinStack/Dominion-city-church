@@ -64,14 +64,14 @@ const BooksSection = () => {
 
   const checkout = () => {
     if (cart.length === 0) { toast.error('Your cart is empty'); return; }
-    toast.success(`Proceeding to checkout! Total: \u20A6${total.toLocaleString()}`);
+    toast.info('Online checkout is coming soon — please contact the church office to order these books.');
   };
 
   return (
     <Box sx={{ py: { xs: 6, md: 10 } }}>
       <Container maxWidth="lg">
         <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: 4, display: 'block', mb: 1 }}>
+          <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: '0.14em', display: 'block', mb: 1 }}>
             Resources
           </Typography>
           <Typography variant="h2">Books & Resources</Typography>

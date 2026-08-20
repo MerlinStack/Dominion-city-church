@@ -23,22 +23,22 @@ import {
   Stack,
   Collapse,
 } from '@mui/material';
-import { Menu, X, Heart, Sun, Moon } from 'lucide-react';
+import { Menu, X, Search, Sun, Moon } from 'lucide-react';
 
 import { useThemeStore } from '../../stores/useThemeStore';
+import { useUiStore } from '../../stores/useUiStore';
 
 const navLinks = [
-  { path: '/', label: 'HOME' },
   {
-    label: 'ABOUT US',
+    label: 'About',
     dropdown: [
-      { path: '/about#story', label: 'Our Story' },
-      { path: '/about#beliefs', label: 'Our Beliefs' },
-      { path: '/about#pastor', label: 'Our Pastor' },
+      { path: '/about#story', label: 'Our story' },
+      { path: '/about#beliefs', label: 'Our beliefs' },
+      { path: '/about#pastor', label: 'Our pastor' },
     ],
   },
   {
-    label: 'MINISTRIES',
+    label: 'Ministries',
     dropdown: [
       { path: '/ministries#workforce', label: 'Workforce' },
       { path: '/ministries#youth', label: 'The Edge Youth' },
@@ -46,10 +46,10 @@ const navLinks = [
       { path: '/ministries#men', label: 'Men of Honour' },
     ],
   },
-  { path: '/events', label: 'EVENTS' },
-  { path: '/sermons', label: 'SERMONS' },
-  { path: '/books', label: 'BOOKS' },
-  { path: '/contact', label: 'CONTACT' },
+  { path: '/events', label: 'Events' },
+  { path: '/sermons', label: 'Messages' },
+  { path: '/books', label: 'Books' },
+  { path: '/contact', label: 'Contact' },
 ];
 
 const Navbar = () => {
@@ -60,6 +60,7 @@ const Navbar = () => {
   const scrolled = useScrollTrigger({ disableHysteresis: true, threshold: 50 });
   const toggleTheme = useThemeStore((s) => s.toggleTheme);
   const mode = useThemeStore((s) => s.mode);
+  const openSearch = useUiStore((s) => s.openSearch);
 
   useEffect(() => {
     setMobileOpen(false);
@@ -92,9 +93,8 @@ const Navbar = () => {
             onMouseEnter={(e) => handleMouseEnter(index, e)}
             sx={{
               color: 'text.primary',
-              fontSize: '0.85rem',
+              fontSize: '0.92rem',
               fontWeight: 500,
-              letterSpacing: '1px',
               py: 1,
               '&:hover': { color: 'primary.main' },
               position: 'relative',
@@ -123,19 +123,20 @@ const Navbar = () => {
             {({ TransitionProps }) => (
               <Grow {...TransitionProps} style={{ transformOrigin: 'top' }}>
                 <Paper
+                  elevation={0}
                   sx={{
                     mt: 1,
-                    minWidth: 200,
+                    minWidth: 210,
                     borderRadius: 2,
                     bgcolor: 'background.paper',
-                    backdropFilter: 'blur(20px)',
                     border: '1px solid',
-                    borderColor: 'primary.main',
-                    boxShadow: '0 10px 30px -10px rgba(0,0,0,0.3)',
+                    borderColor: 'divider',
+                    boxShadow: '0 16px 40px -16px rgba(2,6,18,0.35)',
+                    overflow: 'hidden',
                   }}
                 >
                   <ClickAwayListener onClickAway={handleClose}>
-                    <MenuList>
+                    <MenuList sx={{ py: 1 }}>
                       {link.dropdown?.map((item) => (
                         <ListItemButton
                           key={item.path}
@@ -143,6 +144,7 @@ const Navbar = () => {
                           to={item.path}
                           onClick={handleClose}
                           sx={{
+                            py: 1.2,
                             color: 'text.secondary',
                             '&:hover': { color: 'primary.main', bgcolor: 'action.hover' },
                           }}
@@ -167,9 +169,8 @@ const Navbar = () => {
         to={link.path}
         sx={{
           color: 'text.primary',
-          fontSize: '0.85rem',
+          fontSize: '0.92rem',
           fontWeight: 500,
-          letterSpacing: '1px',
           py: 1,
           position: 'relative',
           '&::after': {
@@ -204,7 +205,7 @@ const Navbar = () => {
         >
           Menu
         </Typography>
-        <IconButton onClick={() => setMobileOpen(false)}>
+        <IconButton onClick={() => setMobileOpen(false)} aria-label="Close menu">
           <X />
         </IconButton>
       </Stack>
@@ -250,8 +251,7 @@ const Navbar = () => {
         <Divider sx={{ my: 1 }} />
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/give">
-            <Heart />
-            <ListItemText primary="GIVE" sx={{ ml: 2 }} />
+            <ListItemText primary="Give" />
           </ListItemButton>
         </ListItem>
       </List>
@@ -262,62 +262,53 @@ const Navbar = () => {
     <>
       <AppBar
         position="fixed"
-        elevation={scrolled ? 1 : 0}
+        elevation={0}
         sx={{
-          bgcolor: scrolled
-            ? 'background.default'
-            : 'transparent',
-          backdropFilter: scrolled ? 'blur(10px)' : 'none',
-          transition: 'all 0.4s ease',
+          bgcolor: scrolled ? 'background.default' : 'transparent',
+          backdropFilter: scrolled ? 'blur(14px)' : 'none',
+          transition: 'background-color 0.4s ease, backdrop-filter 0.4s ease',
           borderBottom: scrolled ? '1px solid' : 'none',
           borderColor: 'divider',
+          boxShadow: scrolled ? '0 8px 30px -20px rgba(2,6,18,0.4)' : 'none',
         }}
       >
         <Container maxWidth="xl">
-          <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
+          <Toolbar disableGutters sx={{ justifyContent: 'space-between', minHeight: { xs: 64, md: 72 } }}>
             <Box
               component={Link}
               to="/"
               sx={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
+              aria-label="Dominion City home"
             >
               <Box
                 component="img"
                 src="/images/logo.png"
                 alt="Dominion City"
-                sx={{ height: 50, width: 'auto' }}
+                sx={{ height: 46, width: 'auto' }}
               />
             </Box>
 
-            <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 0.5 }}>
               {navLinks.map((link, index) => renderLink(link, index))}
-              <IconButton onClick={toggleTheme} sx={{ color: 'text.primary', ml: 1 }}>
-                {mode === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+              <IconButton onClick={openSearch} aria-label="Search" sx={{ color: 'text.primary', ml: 1 }}>
+                <Search size={19} />
               </IconButton>
-              <Button
-                component={Link}
-                to="/give"
-                variant="contained"
-                startIcon={<Heart size={16} />}
-                sx={{
-                  ml: 1,
-                  border: '2px solid transparent',
-                  '&:hover': {
-                    bgcolor: 'transparent',
-                    borderColor: 'primary.main',
-                    color: 'primary.main',
-                    boxShadow: 'none',
-                  },
-                }}
-              >
-                GIVE
+              <IconButton onClick={toggleTheme} sx={{ color: 'text.primary' }} aria-label="Toggle theme">
+                {mode === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
+              </IconButton>
+              <Button component={Link} to="/give" variant="contained" sx={{ ml: 1.5 }}>
+                Give
               </Button>
             </Box>
 
-            <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', gap: 1 }}>
-              <IconButton onClick={toggleTheme} sx={{ color: 'text.primary' }}>
-                {mode === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', gap: 0.5 }}>
+              <IconButton onClick={openSearch} sx={{ color: 'text.primary' }} aria-label="Search">
+                <Search size={19} />
               </IconButton>
-              <IconButton onClick={() => setMobileOpen(true)} sx={{ color: 'text.primary' }}>
+              <IconButton onClick={toggleTheme} sx={{ color: 'text.primary' }} aria-label="Toggle theme">
+                {mode === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
+              </IconButton>
+              <IconButton onClick={() => setMobileOpen(true)} sx={{ color: 'text.primary' }} aria-label="Open menu">
                 <Menu />
               </IconButton>
             </Box>
@@ -332,7 +323,6 @@ const Navbar = () => {
         PaperProps={{
           sx: {
             bgcolor: 'background.default',
-            backdropFilter: 'blur(20px)',
           },
         }}
       >

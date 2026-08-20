@@ -27,7 +27,7 @@ const MinistriesSection = () => {
     <Box sx={{ py: { xs: 8, md: 12 } }}>
       <Container maxWidth="lg">
         <Box sx={{ textAlign: 'center', mb: 6 }}>
-          <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: 4, display: 'block', mb: 1 }}>
+          <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: '0.14em', display: 'block', mb: 1 }}>
             Serving With Purpose
           </Typography>
           <Typography variant="h2">Our Ministries & Workforce</Typography>

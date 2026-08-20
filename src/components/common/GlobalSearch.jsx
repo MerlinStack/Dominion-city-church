@@ -14,9 +14,11 @@ import {
   alpha,
 } from '@mui/material';
 import { Search, X, Calendar, Video, Heart, FileText } from 'lucide-react';
+import { useUiStore } from '../../stores/useUiStore';
 
 const GlobalSearch = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const isOpen = useUiStore((s) => s.searchOpen);
+  const closeSearch = useUiStore((s) => s.closeSearch);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [allContent, setAllContent] = useState([]);
@@ -28,10 +30,10 @@ const GlobalSearch = () => {
 
     const staticContent = [
       { type: 'page', title: 'Home', path: '/', content: 'Welcome to Dominion City' },
-      { type: 'page', title: 'About Us', path: '/about', content: 'Our story and beliefs' },
+      { type: 'page', title: 'About us', path: '/about', content: 'Our story and beliefs' },
       { type: 'page', title: 'Ministries', path: '/ministries', content: 'Church ministries' },
       { type: 'page', title: 'Events', path: '/events', content: 'Upcoming events' },
-      { type: 'page', title: 'Sermons', path: '/sermons', content: 'Latest messages' },
+      { type: 'page', title: 'Messages', path: '/sermons', content: 'Latest messages' },
       { type: 'page', title: 'Give', path: '/give', content: 'Support the vision' },
       { type: 'page', title: 'Contact', path: '/contact', content: 'Get in touch' },
     ];
@@ -74,11 +76,12 @@ const GlobalSearch = () => {
     (e) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setIsOpen((prev) => !prev);
+        const open = useUiStore.getState().searchOpen;
+        open ? useUiStore.getState().closeSearch() : useUiStore.getState().openSearch();
       }
-      if (e.key === 'Escape') setIsOpen(false);
+      if (e.key === 'Escape') closeSearch();
     },
-    []
+    [closeSearch]
   );
 
   useEffect(() => {
@@ -101,25 +104,6 @@ const GlobalSearch = () => {
 
   return (
     <>
-      <IconButton
-        onClick={() => setIsOpen(true)}
-        sx={{
-          position: 'fixed',
-          right: 24,
-          bottom: 24,
-          zIndex: 1100,
-          bgcolor: 'primary.main',
-          color: 'white',
-          '&:hover': { bgcolor: 'primary.dark' },
-          width: 48,
-          height: 48,
-          boxShadow: '0 4px 15px rgba(65, 105, 225, 0.4)',
-        }}
-        aria-label="Search"
-      >
-        <Search size={20} />
-      </IconButton>
-
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -135,7 +119,7 @@ const GlobalSearch = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setIsOpen(false)}
+            onClick={closeSearch}
           >
             <motion.div
               style={{ width: '90%', maxWidth: 700 }}
@@ -173,7 +157,7 @@ const GlobalSearch = () => {
                     onChange={(e) => setQuery(e.target.value)}
                     sx={{ fontSize: '1.1rem' }}
                   />
-                  <IconButton onClick={() => setIsOpen(false)} size="small">
+                  <IconButton onClick={closeSearch} size="small">
                     <X size={20} />
                   </IconButton>
                 </Box>
@@ -186,7 +170,7 @@ const GlobalSearch = () => {
                           key={index}
                           component={Link}
                           to={result.path}
-                          onClick={() => setIsOpen(false)}
+                          onClick={closeSearch}
                           sx={{
                             borderBottom: '1px solid',
                             borderColor: 'divider',

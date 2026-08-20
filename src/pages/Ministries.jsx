@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Container, Typography, Button, Grid, Chip, Stack, TextField, MenuItem, Checkbox, FormControlLabel, alpha } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import Seo from '../components/common/Seo';
 import { toast } from 'react-toastify';
 import { Music, Video, Hand, Baby, HelpingHand, Heart, Shield, UtensilsCrossed, HandHelping, Users } from 'lucide-react';
 
@@ -42,10 +42,11 @@ const Ministries = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Ministries & Workforce | Dominion City</title>
-        <meta name="description" content="Discover various ministries and workforce units at Dominion City where you can serve and make an impact." />
-      </Helmet>
+      <Seo
+        path="/ministries"
+        title="Ministries & Workforce | Dominion City"
+        description="Discover various ministries and workforce units at Dominion City where you can serve and make an impact."
+      />
       <Box sx={{ pt: '80px' }}>
         <Box sx={{ py: { xs: 8, md: 12 }, textAlign: 'center', background: (theme) =>
           theme.palette.mode === 'dark' ? 'linear-gradient(135deg, #000000, #1E3A8A)' : 'linear-gradient(135deg, #F8FAFC, #E8F0FE)',
@@ -65,7 +66,7 @@ const Ministries = () => {
         <Box sx={{ py: { xs: 8, md: 12 } }}>
           <Container maxWidth="lg">
             <Box sx={{ textAlign: 'center', mb: 6 }}>
-              <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: 4, display: 'block', mb: 1 }}>
+              <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: '0.14em', display: 'block', mb: 1 }}>
                 Serve With Purpose
               </Typography>
               <Typography variant="h2">Workforce Departments</Typography>

@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+import MobileBottomNav from './components/layout/MobileBottomNav';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import GlobalSearch from './components/common/GlobalSearch';
 import ScrollToTop from './components/common/ScrollToTop';
@@ -51,6 +52,7 @@ const App = () => {
         </Suspense>
       </Box>
       <Footer />
+      <MobileBottomNav />
     </AppThemeProvider>
   );
 };

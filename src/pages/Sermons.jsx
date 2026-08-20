@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Container, Typography, Button, Grid, IconButton, Chip, Stack } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import Seo from '../components/common/Seo';
 import { Play, Download, Share2, User, Calendar, Headphones } from 'lucide-react';
 
 const sermons = [
@@ -25,10 +25,11 @@ const Sermons = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Sermons | Dominion City</title>
-        <meta name="description" content="Listen and watch sermons by Dr. David Ogbueli and other ministers at Dominion City." />
-      </Helmet>
+      <Seo
+        path="/sermons"
+        title="Sermons | Dominion City"
+        description="Listen and watch sermons by Dr. David Ogbueli and other ministers at Dominion City."
+      />
       <Box sx={{ pt: '80px' }}>
         <Box sx={{ py: { xs: 8, md: 12 }, textAlign: 'center', background: (theme) =>
           theme.palette.mode === 'dark' ? 'linear-gradient(135deg, #000000, #1E3A8A)' : 'linear-gradient(135deg, #F8FAFC, #E8F0FE)',

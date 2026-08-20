@@ -8,27 +8,29 @@
   --secondary-blue: #1E3A8A;
   --secondary-blue-light: #3B5FBD;
   --white: #FFFFFF;
-  --white-off: #F8FAFC;
-  --white-cream: #F1F5F9;
-  --dark-bg: #000000;
-  --darker-bg: #0A0A0A;
+  --white-off: #FAF7F2;
+  --white-cream: #F4EFE7;
+  --dark-bg: #0B1120;
+  --darker-bg: #0F172A;
+  --surface-2: #111827;
+  --surface-3: #162033;
+  --divider-dark: rgba(255, 255, 255, 0.06);
   --text-light: #FFFFFF;
-  --text-offwhite: #F1F5F9;
-  --text-gray: #CBD5E1;
+  --text-offwhite: #E6EAF2;
+  --text-gray: #94A3B8;
   --text-dark: #1E293B;
-  --overlay-dark: rgba(0, 0, 0, 0.7);
+  --overlay-dark: rgba(4, 8, 18, 0.6);
   --overlay-blue: rgba(65, 105, 225, 0.2);
-  --overlay-light: rgba(255, 255, 255, 0.1);
+  --overlay-light: rgba(255, 255, 255, 0.08);
   --gradient-primary: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
   --gradient-light: linear-gradient(135deg, var(--white-off), var(--white-cream));
   --gradient-hero: linear-gradient(135deg, var(--dark-bg), var(--primary-blue-dark));
   --font-primary: 'Cormorant Garamond', serif;
   --font-secondary: 'Inter', sans-serif;
-  --transition-smooth: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  --shadow-elegant: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
-  --shadow-blue: 0 5px 20px rgba(65, 105, 225, 0.3);
-  --shadow-hover: 0 20px 40px -15px rgba(65, 105, 225, 0.4);
+  --transition-smooth: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-elegant: 0 10px 30px -10px rgba(2, 6, 18, 0.35);
+  --shadow-blue: 0 5px 20px rgba(65, 105, 225, 0.25);
+  --shadow-hover: 0 20px 40px -15px rgba(65, 105, 225, 0.3);
 }
 
 /* ========== RESET & BASE ========== */
@@ -121,9 +123,9 @@ section {
 
 .section-subtitle {
   color: var(--primary-blue);
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   display: block;
   margin-bottom: 10px;
 }
@@ -166,33 +168,6 @@ section {
   to { opacity: 1; }
 }
 
-@keyframes glitch {
-  0%, 100% { transform: none; opacity: 1; }
-  7% { transform: skew(-0.5deg, -0.9deg); opacity: 0.75; }
-  10% { transform: none; opacity: 1; }
-  27% { transform: none; opacity: 1; }
-  30% { transform: skew(0.8deg, -0.1deg); opacity: 0.75; }
-  35% { transform: none; opacity: 1; }
-  52% { transform: none; opacity: 1; }
-  55% { transform: skew(-1deg, 0.2deg); opacity: 0.75; }
-  50% { transform: none; opacity: 1; }
-  72% { transform: none; opacity: 1; }
-  75% { transform: skew(0.4deg, 1deg); opacity: 0.75; }
-  80% { transform: none; opacity: 1; }
-  95% { transform: none; opacity: 1; }
-  100% { transform: none; opacity: 1; }
-}
-
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes float {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 .animate-on-scroll {
   opacity: 0;
   transform: translateY(30px);
@@ -211,14 +186,15 @@ section {
   --primary-blue-dark: #2E4DB0;
   --secondary-blue: #E8F0FE;
   --white: #FFFFFF;
-  --dark-bg: #F8FAFC;
+  --dark-bg: #FAF7F2;
   --darker-bg: #FFFFFF;
   --text-light: #1E293B;
   --text-offwhite: #334155;
-  --text-gray: #475569;
+  --text-gray: #5B6472;
   --text-dark: #0F172A;
-  --shadow-elegant: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
-  --shadow-blue: 0 5px 20px rgba(65, 105, 225, 0.2);
+  --divider-dark: rgba(15, 23, 42, 0.08);
+  --shadow-elegant: 0 10px 30px -10px rgba(15, 23, 42, 0.08);
+  --shadow-blue: 0 5px 20px rgba(65, 105, 225, 0.18);
 }
 
 .light-theme body {
@@ -747,3 +723,27 @@ section {
 }
 
 /* ========== SMOOTH TRANSITIONS ========== */
+
+/* ========== REDUCED MOTION ========== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .animate-on-scroll {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 899.98px) {
+  body {
+    padding-bottom: 72px;
+  }
+}

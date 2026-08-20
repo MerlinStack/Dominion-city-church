@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Box, Container, Typography, IconButton, Stack } from '@mui/material';
-import { motion, useInView } from 'framer-motion';
+import { Box, Container, Typography } from '@mui/material';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 
 const marqueeImages = [
   { src: '/images/grid/Sunday-service-.jpeg', label: 'Sunday Service', category: 'Free Transportaion' },
@@ -34,7 +34,7 @@ const marqueeImages = [
 const MarqueeGrid = () => {
   const trackRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
-  const [speed, setSpeed] = useState(0.5);
+  const reduceMotion = useReducedMotion();
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
@@ -42,12 +42,17 @@ const MarqueeGrid = () => {
     const track = trackRef.current;
     if (!track) return;
 
+    if (reduceMotion) {
+      track.style.transform = 'translateX(0)';
+      return;
+    }
+
     let animationId;
     let position = 0;
 
     const animate = () => {
       if (!isHovered) {
-        position -= speed;
+        position -= 0.5;
         if (Math.abs(position) >= track.scrollWidth / 2) {
           position = 0;
         }
@@ -58,7 +63,7 @@ const MarqueeGrid = () => {
 
     animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, [isHovered, speed]);
+  }, [isHovered, reduceMotion]);
 
   return (
     <Box ref={sectionRef} sx={{ py: { xs: 6, md: 8 }, overflow: 'hidden' }}>
@@ -71,9 +76,9 @@ const MarqueeGrid = () => {
           <Box sx={{ textAlign: 'center', mb: 4 }}>
             <Typography
               variant="overline"
-              sx={{ color: 'primary.main', letterSpacing: 4, display: 'block', mb: 1 }}
+              sx={{ color: 'primary.main', display: 'block', mb: 1 }}
             >
-              Our Community
+              Our community
             </Typography>
             <Typography variant="h2" sx={{ fontSize: { xs: '2rem', md: '3rem' }, mb: 1 }}>
               Moments That Matter
@@ -166,30 +171,6 @@ const MarqueeGrid = () => {
           ))}
         </Box>
       </Box>
-
-      <Stack direction="row" justifyContent="center" spacing={1} sx={{ mt: 3 }}>
-        {[
-          { speed: 0.3, label: 'Slow' },
-          { speed: 0.5, label: 'Normal' },
-          { speed: 0.8, label: 'Fast' },
-        ].map((item) => (
-          <IconButton
-            key={item.speed}
-            onClick={() => setSpeed(item.speed)}
-            sx={{
-              width: 36,
-              height: 36,
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              bgcolor: speed === item.speed ? 'primary.main' : 'action.hover',
-              color: speed === item.speed ? 'white' : 'text.primary',
-              '&:hover': { bgcolor: 'primary.main', color: 'white' },
-            }}
-          >
-            {item.label[0]}
-          </IconButton>
-        ))}
-      </Stack>
     </Box>
   );
 };

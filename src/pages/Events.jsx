@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Container, Typography, Button, Stack, TextField, Chip, alpha } from '@mui/material';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import Seo from '../components/common/Seo';
 import { Clock, MapPin, Tag } from 'lucide-react';
 import { toast } from 'react-toastify';
 
@@ -39,10 +39,11 @@ const Events = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Events | Dominion City</title>
-        <meta name="description" content="Stay updated with all upcoming events, conferences, and programs at Dominion City." />
-      </Helmet>
+      <Seo
+        path="/events"
+        title="Events | Dominion City"
+        description="Stay updated with all upcoming events, conferences, and programs at Dominion City."
+      />
       <Box sx={{ pt: '80px' }}>
         <Box sx={{ py: { xs: 8, md: 12 }, textAlign: 'center', background: (theme) =>
           theme.palette.mode === 'dark' ? 'linear-gradient(135deg, #000000, #1E3A8A)' : 'linear-gradient(135deg, #F8FAFC, #E8F0FE)',
