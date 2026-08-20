@@ -9,11 +9,6 @@ import './styles/index.css';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
-// Enable Fast Refresh for development
-if (process.env.NODE_ENV === 'development' && module.hot) {
-  module.hot.accept();
-}
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -23,7 +18,10 @@ const queryClient = new QueryClient({
   },
 });
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(
+  document.getElementById('root')
+);
+
 root.render(
   <React.StrictMode>
     <HelmetProvider>
@@ -53,7 +51,6 @@ root.render(
   </React.StrictMode>
 );
 
-// Only register service worker in production
 if (process.env.NODE_ENV === 'production') {
   serviceWorkerRegistration.register();
 }

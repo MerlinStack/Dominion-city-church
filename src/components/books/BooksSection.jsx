@@ -1,369 +1,265 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaShoppingCart, FaStar, FaStarHalfAlt, FaRegStar, FaHeart, FaShare, FaEye } from 'react-icons/fa';
+import {
+  Box, Container, Typography, Button, Grid, Stack, Chip, IconButton,
+  Select, MenuItem, Dialog, DialogTitle, DialogContent,
+  Drawer, Divider, Rating,
+} from '@mui/material';
+import { motion } from 'framer-motion';
+import {
+  ShoppingCart, Heart, Share2, Eye, Plus, Minus, X,
+} from 'lucide-react';
 import { toast } from 'react-toastify';
-import './BooksSection.css';
 
 const books = [
-  {
-    id: 1,
-    title: "The Power of Dominion",
-    author: "Dr. David Ogbueli",
-    price: 5000,
-    originalPrice: 7500,
-    coverImage: "/images/books/power-of-dominion.jpg",
-    description: "Discover your authority in Christ and learn to walk in dominion over every circumstance.",
-    rating: 4.8,
-    reviews: 127,
-    category: "Spiritual Growth",
-    isBestseller: true,
-    isNew: false,
-    format: ["Hardcover", "Paperback", "E-book"]
-  },
-  {
-    id: 2,
-    title: "Raising Kingdom Leaders",
-    author: "Dr. David Ogbueli",
-    price: 6500,
-    originalPrice: 8500,
-    coverImage: "/images/books/raising-kingdom-leaders.jpg",
-    description: "Biblical principles for raising leaders who will impact their generations.",
-    rating: 4.9,
-    reviews: 98,
-    category: "Leadership",
-    isBestseller: true,
-    isNew: false,
-    format: ["Hardcover", "Paperback"]
-  },
-  {
-    id: 3,
-    title: "Wisdom for Living",
-    author: "Dr. David Ogbueli",
-    price: 4500,
-    originalPrice: 6000,
-    coverImage: "/images/books/wisdom-for-living.jpg",
-    description: "Daily devotional for practical wisdom and spiritual growth.",
-    rating: 4.7,
-    reviews: 203,
-    category: "Devotional",
-    isBestseller: false,
-    isNew: true,
-    format: ["Paperback", "E-book"]
-  },
-  {
-    id: 4,
-    title: "Financial Freedom",
-    author: "Pastor John Adekunle",
-    price: 5500,
-    originalPrice: 7000,
-    coverImage: "/images/books/financial-freedom.jpg",
-    description: "Biblical principles for financial breakthrough and stewardship.",
-    rating: 4.6,
-    reviews: 86,
-    category: "Finance",
-    isBestseller: false,
-    isNew: false,
-    format: ["Paperback", "E-book"]
-  },
-  {
-    id: 5,
-    title: "The Spirit of Prayer",
-    author: "Dr. David Ogbueli",
-    price: 5000,
-    originalPrice: 6500,
-    coverImage: "/images/books/spirit-of-prayer.jpg",
-    description: "Understanding the power of prayer and developing a consistent prayer life.",
-    rating: 4.9,
-    reviews: 156,
-    category: "Prayer",
-    isBestseller: true,
-    isNew: false,
-    format: ["Hardcover", "Paperback", "E-book"]
-  },
-  {
-    id: 6,
-    title: "Marriage That Works",
-    author: "Pastor & Mrs. Ogbueli",
-    price: 7000,
-    originalPrice: 9000,
-    coverImage: "/images/books/marriage-that-works.jpg",
-    description: "Biblical principles for building a strong and lasting marriage.",
-    rating: 4.8,
-    reviews: 112,
-    category: "Family",
-    isBestseller: false,
-    isNew: true,
-    format: ["Hardcover", "Paperback"]
-  }
+  { id: 1, title: 'The Power of Dominion', author: 'Dr. David Ogbueli', price: 5000, originalPrice: 7500, coverImage: '/images/books/power-of-dominion.jpg', description: 'Discover your authority in Christ and learn to walk in dominion over every circumstance.', rating: 4.8, reviews: 127, category: 'Spiritual Growth', isBestseller: true, isNew: false, format: ['Hardcover', 'Paperback', 'E-book'] },
+  { id: 2, title: 'Raising Kingdom Leaders', author: 'Dr. David Ogbueli', price: 6500, originalPrice: 8500, coverImage: '/images/books/raising-kingdom-leaders.jpg', description: 'Biblical principles for raising leaders who will impact their generations.', rating: 4.9, reviews: 98, category: 'Leadership', isBestseller: true, isNew: false, format: ['Hardcover', 'Paperback'] },
+  { id: 3, title: 'Wisdom for Living', author: 'Dr. David Ogbueli', price: 4500, originalPrice: 6000, coverImage: '/images/books/wisdom-for-living.jpg', description: 'Daily devotional for practical wisdom and spiritual growth.', rating: 4.7, reviews: 203, category: 'Devotional', isBestseller: false, isNew: true, format: ['Paperback', 'E-book'] },
+  { id: 4, title: 'Financial Freedom', author: 'Pastor John Adekunle', price: 5500, originalPrice: 7000, coverImage: '/images/books/financial-freedom.jpg', description: 'Biblical principles for financial breakthrough and stewardship.', rating: 4.6, reviews: 86, category: 'Finance', isBestseller: false, isNew: false, format: ['Paperback', 'E-book'] },
+  { id: 5, title: 'The Spirit of Prayer', author: 'Dr. David Ogbueli', price: 5000, originalPrice: 6500, coverImage: '/images/books/spirit-of-prayer.jpg', description: 'Understanding the power of prayer and developing a consistent prayer life.', rating: 4.9, reviews: 156, category: 'Prayer', isBestseller: true, isNew: false, format: ['Hardcover', 'Paperback', 'E-book'] },
+  { id: 6, title: 'Marriage That Works', author: 'Pastor & Mrs. Ogbueli', price: 7000, originalPrice: 9000, coverImage: '/images/books/marriage-that-works.jpg', description: 'Biblical principles for building a strong and lasting marriage.', rating: 4.8, reviews: 112, category: 'Family', isBestseller: false, isNew: true, format: ['Hardcover', 'Paperback'] },
 ];
 
-const categories = ["All", "Spiritual Growth", "Leadership", "Devotional", "Finance", "Prayer", "Family"];
+const categories = ['All', 'Spiritual Growth', 'Leadership', 'Devotional', 'Finance', 'Prayer', 'Family'];
 
 const BooksSection = () => {
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
-  const [sortBy, setSortBy] = useState("featured");
+  const [sortBy, setSortBy] = useState('featured');
 
-  const filteredBooks = books.filter(book => 
-    selectedCategory === "All" || book.category === selectedCategory
-  );
-
-  const sortedBooks = [...filteredBooks].sort((a, b) => {
-    if (sortBy === "price-low") return a.price - b.price;
-    if (sortBy === "price-high") return b.price - a.price;
-    if (sortBy === "rating") return b.rating - a.rating;
-    if (sortBy === "bestseller") return (b.isBestseller ? 1 : 0) - (a.isBestseller ? 1 : 0);
+  const filtered = books.filter((b) => selectedCategory === 'All' || b.category === selectedCategory);
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortBy === 'price-low') return a.price - b.price;
+    if (sortBy === 'price-high') return b.price - a.price;
+    if (sortBy === 'rating') return b.rating - a.rating;
+    if (sortBy === 'bestseller') return (b.isBestseller ? 1 : 0) - (a.isBestseller ? 1 : 0);
     return 0;
   });
 
   const addToCart = (book) => {
-    setCart([...cart, { ...book, quantity: 1 }]);
-    toast.success(`${book.title} added to cart!`);
+    const existing = cart.find((item) => item.id === book.id);
+    if (existing) {
+      setCart(cart.map((item) =>
+        item.id === book.id ? { ...item, quantity: item.quantity + 1 } : item
+      ));
+      toast.success(`${book.title} quantity updated!`);
+    } else {
+      setCart([...cart, { ...book, quantity: 1 }]);
+      toast.success(`${book.title} added to cart!`);
+    }
   };
 
-  const removeFromCart = (bookId) => {
-    setCart(cart.filter(item => item.id !== bookId));
-    toast.info("Item removed from cart");
+  const removeFromCart = (id) => {
+    setCart(cart.filter((item) => item.id !== id));
+    toast.info('Item removed from cart');
   };
 
-  const updateQuantity = (bookId, newQuantity) => {
-    if (newQuantity < 1) return;
-    setCart(cart.map(item => 
-      item.id === bookId ? { ...item, quantity: newQuantity } : item
-    ));
+  const updateQty = (id, qty) => {
+    if (qty < 1) return;
+    setCart(cart.map((item) => item.id === id ? { ...item, quantity: qty } : item));
   };
 
-  const getCartTotal = () => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-  };
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const checkout = () => {
-    if (cart.length === 0) {
-      toast.error("Your cart is empty");
-      return;
-    }
-    toast.success(`Proceeding to checkout! Total: ₦${getCartTotal().toLocaleString()}`);
-    // Here you would integrate payment gateway
-  };
-
-  const renderStars = (rating) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<FaStar key={i} />);
-    }
-    if (hasHalfStar) {
-      stars.push(<FaStarHalfAlt key="half" />);
-    }
-    while (stars.length < 5) {
-      stars.push(<FaRegStar key={stars.length} />);
-    }
-    return stars;
+    if (cart.length === 0) { toast.error('Your cart is empty'); return; }
+    toast.success(`Proceeding to checkout! Total: \u20A6${total.toLocaleString()}`);
   };
 
   return (
-    <section className="books-section">
-      <div className="container">
-        <div className="section-header">
-          <span className="section-subtitle">Resources</span>
-          <h2>Books & Resources</h2>
-          <p>Empowering you with life-transforming materials</p>
-        </div>
+    <Box sx={{ py: { xs: 6, md: 10 } }}>
+      <Container maxWidth="lg">
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
+          <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: 4, display: 'block', mb: 1 }}>
+            Resources
+          </Typography>
+          <Typography variant="h2">Books & Resources</Typography>
+          <Typography variant="body1" sx={{ color: 'text.secondary' }}>Empowering you with life-transforming materials</Typography>
+        </Box>
 
-        {/* Cart Button */}
-        <button className="cart-button" onClick={() => setShowCart(true)}>
-          <FaShoppingCart />
-          {cart.length > 0 && <span className="cart-count">{cart.length}</span>}
-        </button>
+        <IconButton onClick={() => setShowCart(true)} sx={{ position: 'fixed', top: 100, right: 24, zIndex: 100, bgcolor: 'primary.main', color: 'white', '&:hover': { bgcolor: 'primary.dark' }, width: 48, height: 48 }}>
+          <ShoppingCart />
+          {cart.length > 0 && (
+            <Box sx={{ position: 'absolute', top: -4, right: -4, bgcolor: 'error.main', color: 'white', borderRadius: 10, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 700 }}>
+              {cart.length}
+            </Box>
+          )}
+        </IconButton>
 
-        {/* Filters */}
-        <div className="books-filters">
-          <div className="category-filters">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                className={`filter-btn ${selectedCategory === cat ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(cat)}
-              >
-                {cat}
-              </button>
+        <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" spacing={2} sx={{ mb: 4 }}>
+          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+            {categories.map((cat) => (
+              <Chip key={cat} label={cat} onClick={() => setSelectedCategory(cat)}
+                variant={selectedCategory === cat ? 'filled' : 'outlined'}
+                sx={{ fontWeight: 600, bgcolor: selectedCategory === cat ? 'primary.main' : 'transparent',
+                  color: selectedCategory === cat ? 'white' : 'text.primary', borderColor: 'primary.main' }}
+              />
             ))}
-          </div>
-          <div className="sort-select">
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-              <option value="featured">Featured</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="rating">Highest Rated</option>
-              <option value="bestseller">Bestsellers</option>
-            </select>
-          </div>
-        </div>
+          </Stack>
+          <Select size="small" value={sortBy} onChange={(e) => setSortBy(e.target.value)} sx={{ minWidth: 150, borderRadius: 4 }}>
+            <MenuItem value="featured">Featured</MenuItem>
+            <MenuItem value="price-low">Price: Low to High</MenuItem>
+            <MenuItem value="price-high">Price: High to Low</MenuItem>
+            <MenuItem value="rating">Highest Rated</MenuItem>
+            <MenuItem value="bestseller">Bestsellers</MenuItem>
+          </Select>
+        </Stack>
 
-        {/* Books Grid */}
-        <div className="books-grid">
-          {sortedBooks.map((book, index) => (
-            <motion.div
-              key={book.id}
-              className="book-card"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.05 }}
-              viewport={{ once: true }}
-              whileHover={{ y: -10 }}
-            >
-              {book.isBestseller && <div className="book-badge bestseller">Bestseller</div>}
-              {book.isNew && <div className="book-badge new">New Release</div>}
-              
-              <div className="book-image" onClick={() => setSelectedBook(book)}>
-                <img src={book.coverImage} alt={book.title} />
-                <div className="book-overlay">
-                  <FaEye /> Quick View
-                </div>
-              </div>
-              
-              <div className="book-info">
-                <h3>{book.title}</h3>
-                <p className="book-author">by {book.author}</p>
-                <div className="book-rating">
-                  {renderStars(book.rating)}
-                  <span>({book.reviews})</span>
-                </div>
-                <p className="book-description">{book.description.substring(0, 80)}...</p>
-                <div className="book-price">
-                  <span className="current-price">₦{book.price.toLocaleString()}</span>
-                  {book.originalPrice && (
-                    <span className="original-price">₦{book.originalPrice.toLocaleString()}</span>
-                  )}
-                </div>
-                <button className="btn btn-primary" onClick={() => addToCart(book)}>
-                  <FaShoppingCart /> Add to Cart
-                </button>
-              </div>
-            </motion.div>
+        <Grid container spacing={3}>
+          {sorted.map((book, index) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={book.id}>
+              <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: index * 0.05 }} viewport={{ once: true }}>
+                <Box sx={{ borderRadius: 3, overflow: 'hidden', bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', transition: 'all 0.3s ease', '&:hover': { transform: 'translateY(-8px)', boxShadow: '0 10px 30px -10px rgba(65,105,225,0.3)' } }}>
+                  <Box sx={{ position: 'relative', height: 220, overflow: 'hidden', cursor: 'pointer' }} onClick={() => setSelectedBook(book)}>
+                    {book.isBestseller && <Chip label="Bestseller" color="primary" size="small" sx={{ position: 'absolute', top: 8, left: 8, zIndex: 2 }} />}
+                    {book.isNew && <Chip label="New Release" color="secondary" size="small" sx={{ position: 'absolute', top: 8, left: 8, zIndex: 2 }} />}
+                    <Box component="img" src={book.coverImage} alt={book.title}
+                      sx={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                    <Box sx={{ position: 'absolute', inset: 0, bgcolor: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.3s ease', '&:hover': { opacity: 1 } }}>
+                      <Eye size={24} style={{ color: 'white' }} />
+                    </Box>
+                  </Box>
+                  <Box sx={{ p: 2.5 }}>
+                    <Typography variant="h6" sx={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem', mb: 0.5 }}>
+                      {book.title}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 1 }}>
+                      by {book.author}
+                    </Typography>
+                    <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+                      <Rating value={book.rating} precision={0.1} readOnly size="small" />
+                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>({book.reviews})</Typography>
+                    </Stack>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1, fontSize: '0.8rem' }}>
+                      {book.description.substring(0, 60)}...
+                    </Typography>
+                    <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+                      <Typography variant="h6" sx={{ color: 'primary.main', fontFamily: "'Cormorant Garamond', serif" }}>
+                        {'\u20A6'}{book.price.toLocaleString()}
+                      </Typography>
+                      {book.originalPrice && (
+                        <Typography variant="caption" sx={{ color: 'text.secondary', textDecoration: 'line-through' }}>
+                          {'\u20A6'}{book.originalPrice.toLocaleString()}
+                        </Typography>
+                      )}
+                    </Stack>
+                    <Button variant="contained" fullWidth size="small" startIcon={<ShoppingCart size={14} />}
+                      onClick={() => addToCart(book)}>
+                      Add to Cart
+                    </Button>
+                  </Box>
+                </Box>
+              </motion.div>
+            </Grid>
           ))}
-        </div>
-      </div>
+        </Grid>
+      </Container>
 
-      {/* Cart Sidebar */}
-      <AnimatePresence>
-        {showCart && (
-          <motion.div
-            className="cart-sidebar"
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'tween', duration: 0.3 }}
-          >
-            <div className="cart-header">
-              <h3>Your Cart ({cart.length} items)</h3>
-              <button className="close-cart" onClick={() => setShowCart(false)}>×</button>
-            </div>
-            <div className="cart-items">
-              {cart.length === 0 ? (
-                <p className="empty-cart">Your cart is empty</p>
-              ) : (
-                cart.map(item => (
-                  <div key={item.id} className="cart-item">
-                    <img src={item.coverImage} alt={item.title} />
-                    <div className="cart-item-details">
-                      <h4>{item.title}</h4>
-                      <p>₦{item.price.toLocaleString()}</p>
-                      <div className="cart-item-quantity">
-                        <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
-                        <span>{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
-                      </div>
-                    </div>
-                    <button className="remove-item" onClick={() => removeFromCart(item.id)}>×</button>
-                  </div>
-                ))
-              )}
-            </div>
-            {cart.length > 0 && (
-              <div className="cart-footer">
-                <div className="cart-total">
-                  <span>Total:</span>
-                  <span>₦{getCartTotal().toLocaleString()}</span>
-                </div>
-                <button className="btn btn-primary checkout-btn" onClick={checkout}>
-                  Proceed to Checkout
-                </button>
-              </div>
-            )}
-          </motion.div>
+      <Drawer anchor="right" open={showCart} onClose={() => setShowCart(false)}
+        PaperProps={{ sx: { width: { xs: '100%', sm: 400 }, bgcolor: 'background.default', p: 3 } }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+          <Typography variant="h5" sx={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            Your Cart ({cart.length} items)
+          </Typography>
+          <IconButton onClick={() => setShowCart(false)}><X /></IconButton>
+        </Stack>
+        <Divider />
+        <Box sx={{ flex: 1, overflow: 'auto', py: 2 }}>
+          {cart.length === 0 ? (
+            <Typography sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>Your cart is empty</Typography>
+          ) : (
+            <Stack spacing={2}>
+              {cart.map((item) => (
+                <Box key={item.id} sx={{ display: 'flex', gap: 2, p: 2, borderRadius: 2, bgcolor: 'background.paper' }}>
+                  <Box component="img" src={item.coverImage} alt={item.title}
+                    sx={{ width: 60, height: 80, borderRadius: 2, objectFit: 'cover' }} />
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="subtitle2">{item.title}</Typography>
+                    <Typography variant="body2" sx={{ color: 'primary.main', fontWeight: 600 }}>{'\u20A6'}{item.price.toLocaleString()}</Typography>
+                    <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 1 }}>
+                      <IconButton size="small" onClick={() => updateQty(item.id, item.quantity - 1)}><Minus size={14} /></IconButton>
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>{item.quantity}</Typography>
+                      <IconButton size="small" onClick={() => updateQty(item.id, item.quantity + 1)}><Plus size={14} /></IconButton>
+                    </Stack>
+                  </Box>
+                  <IconButton size="small" onClick={() => removeFromCart(item.id)}><X size={16} /></IconButton>
+                </Box>
+              ))}
+            </Stack>
+          )}
+        </Box>
+        {cart.length > 0 && (
+          <Box>
+            <Divider />
+            <Stack direction="row" justifyContent="space-between" sx={{ py: 2 }}>
+              <Typography variant="h6">Total:</Typography>
+              <Typography variant="h6" sx={{ color: 'primary.main' }}>{'\u20A6'}{total.toLocaleString()}</Typography>
+            </Stack>
+            <Button variant="contained" fullWidth size="large" onClick={checkout}>Proceed to Checkout</Button>
+          </Box>
         )}
-      </AnimatePresence>
+      </Drawer>
 
-      {/* Book Preview Modal */}
-      <AnimatePresence>
+      <Dialog open={!!selectedBook} onClose={() => setSelectedBook(null)} maxWidth="md" fullWidth PaperProps={{ sx: { borderRadius: 4 } }}>
         {selectedBook && (
-          <motion.div
-            className="book-modal"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedBook(null)}
-          >
-            <motion.div
-              className="book-modal-content"
-              initial={{ scale: 0.9, y: 50 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 50 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button className="modal-close" onClick={() => setSelectedBook(null)}>×</button>
-              <div className="book-modal-grid">
-                <div className="book-modal-image">
-                  <img src={selectedBook.coverImage} alt={selectedBook.title} />
-                </div>
-                <div className="book-modal-info">
-                  <h2>{selectedBook.title}</h2>
-                  <p className="book-author">by {selectedBook.author}</p>
-                  <div className="book-rating">
-                    {renderStars(selectedBook.rating)}
-                    <span>({selectedBook.reviews} reviews)</span>
-                  </div>
-                  <p className="book-description">{selectedBook.description}</p>
-                  <div className="book-price">
-                    <span className="current-price">₦{selectedBook.price.toLocaleString()}</span>
+          <>
+            <DialogTitle sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <IconButton onClick={() => setSelectedBook(null)}><X /></IconButton>
+            </DialogTitle>
+            <DialogContent sx={{ pt: 0 }}>
+              <Grid container spacing={4}>
+                <Grid item xs={12} md={5}>
+                  <Box sx={{ borderRadius: 3, overflow: 'hidden' }}>
+                    <Box component="img" src={selectedBook.coverImage} alt={selectedBook.title} sx={{ width: '100%', height: 350, objectFit: 'cover' }} />
+                  </Box>
+                </Grid>
+                <Grid item xs={12} md={7}>
+                  <Typography variant="h3" sx={{ fontFamily: "'Cormorant Garamond', serif", mb: 1 }}>
+                    {selectedBook.title}
+                  </Typography>
+                  <Typography variant="subtitle1" sx={{ color: 'text.secondary', mb: 2 }}>
+                    by {selectedBook.author}
+                  </Typography>
+                  <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+                    <Rating value={selectedBook.rating} precision={0.1} readOnly />
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>({selectedBook.reviews} reviews)</Typography>
+                  </Stack>
+                  <Typography variant="body1" sx={{ color: 'text.secondary', mb: 3 }}>
+                    {selectedBook.description}
+                  </Typography>
+                  <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
+                    <Typography variant="h4" sx={{ color: 'primary.main', fontFamily: "'Cormorant Garamond', serif" }}>
+                      {'\u20A6'}{selectedBook.price.toLocaleString()}
+                    </Typography>
                     {selectedBook.originalPrice && (
-                      <span className="original-price">₦{selectedBook.originalPrice.toLocaleString()}</span>
+                      <Typography variant="h6" sx={{ color: 'text.secondary', textDecoration: 'line-through' }}>
+                        {'\u20A6'}{selectedBook.originalPrice.toLocaleString()}
+                      </Typography>
                     )}
-                  </div>
-                  <div className="book-formats">
-                    <strong>Available formats:</strong>
-                    <div className="format-buttons">
-                      {selectedBook.format.map(f => (
-                        <button key={f} className="format-btn">{f}</button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="book-modal-actions">
-                    <button className="btn btn-primary" onClick={() => {
-                      addToCart(selectedBook);
-                      setSelectedBook(null);
-                    }}>
-                      <FaShoppingCart /> Add to Cart
-                    </button>
-                    <button className="btn btn-outline">
-                      <FaHeart /> Wishlist
-                    </button>
-                    <button className="btn btn-outline">
-                      <FaShare /> Share
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
+                  </Stack>
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>Available formats:</Typography>
+                  <Stack direction="row" spacing={1} sx={{ mb: 3 }}>
+                    {selectedBook.format.map((f) => (
+                      <Chip key={f} label={f} variant="outlined" />
+                    ))}
+                  </Stack>
+                  <Stack direction="row" spacing={2}>
+                    <Button variant="contained" startIcon={<ShoppingCart />}
+                      onClick={() => { addToCart(selectedBook); setSelectedBook(null); }}>
+                      Add to Cart
+                    </Button>
+                    <Button variant="outlined" startIcon={<Heart />}>Wishlist</Button>
+                    <Button variant="outlined" startIcon={<Share2 />}>Share</Button>
+                  </Stack>
+                </Grid>
+              </Grid>
+            </DialogContent>
+          </>
         )}
-      </AnimatePresence>
-    </section>
+      </Dialog>
+    </Box>
   );
 };
 

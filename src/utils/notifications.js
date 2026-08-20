@@ -1,6 +1,6 @@
 // src/utils/notifications.js
 
-export const rKaNCgLvMEXxNzMxj2F7FYi1AdRrTo6Nhu = async () => {
+export const requestNotificationPermission = async () => {
   if (!('Notification' in window)) {
     console.log('This browser does not support notifications');
     return false;

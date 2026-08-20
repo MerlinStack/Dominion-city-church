@@ -1,128 +1,114 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FaUser, FaCalendar, FaHeart, FaShare, 
-  FaThumbsUp, FaSearch, FaTimes, FaStar,
-  FaPrayingHands, FaHandsHelping, FaChurch, FaHome
-} from 'react-icons/fa';
+import {
+  Box, Container, Typography, Button, Stack, TextField, MenuItem,
+  IconButton, Chip, Dialog, DialogTitle, DialogContent, DialogActions,
+  Checkbox, FormControlLabel, Avatar, alpha, InputAdornment,
+} from '@mui/material';
+import { motion } from 'framer-motion';
+import {
+  User, Heart, Share2, ThumbsUp, Search, Star,
+  HandHelping, HelpingHand, Church, Home, Plus,
+} from 'lucide-react';
 import { toast } from 'react-toastify';
-import './TestimonyForum.css';
+
+const categoryConfig = {
+  healing: { icon: <Heart size={16} />, color: '#4CAF50' },
+  financial: { icon: <HandHelping size={16} />, color: '#FFC107' },
+  family: { icon: <Home size={16} />, color: '#9C27B0' },
+  deliverance: { icon: <HelpingHand size={16} />, color: '#F44336' },
+  career: { icon: <Church size={16} />, color: '#2196F3' },
+};
+
+const categories = [
+  { id: 'all', name: 'All Testimonies', icon: <Star size={16} /> },
+  { id: 'healing', name: 'Healing', icon: <Heart size={16} /> },
+  { id: 'financial', name: 'Financial', icon: <HandHelping size={16} /> },
+  { id: 'family', name: 'Family', icon: <Home size={16} /> },
+  { id: 'deliverance', name: 'Deliverance', icon: <HelpingHand size={16} /> },
+  { id: 'career', name: 'Career', icon: <Church size={16} /> },
+];
+
+const TestimonyCard = ({ testimony, isLiked, onLike, onPray, onShare, onView }) => {
+  const cat = categoryConfig[testimony.category] || categoryConfig.healing;
+  return (
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} whileHover={{ y: -5 }}>
+      <Box sx={{ p: 3, borderRadius: 3, bgcolor: 'background.paper', border: '1px solid', borderColor: testimony.featured ? 'primary.main' : 'divider', position: 'relative', transition: 'all 0.3s ease', '&:hover': { boxShadow: '0 10px 30px -10px rgba(65,105,225,0.3)' } }}>
+        {testimony.featured && (
+          <Chip icon={<Star size={14} />} label="Featured" size="small" color="primary" sx={{ position: 'absolute', top: 12, right: 12 }} />
+        )}
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+          <Avatar sx={{ bgcolor: alpha('#4169E1', 0.2), color: 'primary.main' }}><User size={18} /></Avatar>
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{testimony.name}</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+              {new Date(testimony.date).toLocaleDateString()}
+            </Typography>
+          </Box>
+          <Box sx={{ color: cat.color, bgcolor: alpha(cat.color, 0.1), p: 1, borderRadius: 2 }}>
+            {cat.icon}
+          </Box>
+        </Stack>
+        <Typography variant="h6" sx={{ fontFamily: "'Cormorant Garamond', serif", mb: 1 }}>{testimony.title}</Typography>
+        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+          {testimony.testimony.substring(0, 120)}...
+        </Typography>
+        <Stack direction="row" spacing={1} alignItems="center">
+          <IconButton size="small" onClick={onLike} sx={{ color: isLiked ? 'primary.main' : 'text.secondary' }}>
+            <ThumbsUp size={16} /> <Typography variant="caption" sx={{ ml: 0.5 }}>{testimony.likes}</Typography>
+          </IconButton>
+          <IconButton size="small" onClick={onPray} sx={{ color: 'text.secondary' }}>
+            <HelpingHand size={16} /> <Typography variant="caption" sx={{ ml: 0.5 }}>{testimony.prayerCount}</Typography>
+          </IconButton>
+          <IconButton size="small" onClick={onShare} sx={{ color: 'text.secondary' }}><Share2 size={16} /></IconButton>
+          <Button size="small" onClick={onView} sx={{ ml: 'auto' }}>Read More</Button>
+        </Stack>
+      </Box>
+    </motion.div>
+  );
+};
 
 const TestimonyForum = () => {
   const [testimonies, setTestimonies] = useState([
-    {
-      id: 1,
-      name: 'Sarah Johnson',
-      date: '2024-03-15',
-      title: 'Healed from Chronic Illness',
-      testimony: 'After 5 years of chronic back pain, God healed me during a Sunday service! I can now walk without pain and serve in the ushering team.',
-      category: 'healing',
-      likes: 24,
-      comments: 8,
-      featured: true,
-      prayerCount: 12,
-      userAvatar: null
-    },
-    {
-      id: 2,
-      name: 'Michael Okonkwo',
-      date: '2024-03-10',
-      title: 'Financial Breakthrough',
-      testimony: 'I was about to lose my business when God provided a miracle. A client I had been chasing for 2 years suddenly signed a contract worth ₦5 million!',
-      category: 'financial',
-      likes: 45,
-      comments: 15,
-      featured: true,
-      prayerCount: 28,
-      userAvatar: null
-    },
-    {
-      id: 3,
-      name: 'Pastor David Adeleke',
-      date: '2024-03-05',
-      title: 'Family Restoration',
-      testimony: 'My marriage was on the brink of collapse, but through prayers and counseling at Dominion City, God restored our home. We are now stronger than ever!',
-      category: 'family',
-      likes: 67,
-      comments: 23,
-      featured: true,
-      prayerCount: 35,
-      userAvatar: null
-    },
-    {
-      id: 4,
-      name: 'Blessing Eze',
-      date: '2024-02-28',
-      title: 'Delivered from Depression',
-      testimony: 'I struggled with depression for years. Through the Digging Deep service and mentorship, God set me free. Now I lead a support group for others.',
-      category: 'deliverance',
-      likes: 52,
-      comments: 18,
-      featured: false,
-      prayerCount: 22,
-      userAvatar: null
-    }
+    { id: 1, name: 'Sarah Johnson', date: '2024-03-15', title: 'Healed from Chronic Illness', testimony: 'After 5 years of chronic back pain, God healed me during a Sunday service! I can now walk without pain and serve in the ushering team.', category: 'healing', likes: 24, comments: 8, featured: true, prayerCount: 12, userAvatar: null },
+    { id: 2, name: 'Michael Okonkwo', date: '2024-03-10', title: 'Financial Breakthrough', testimony: 'I was about to lose my business when God provided a miracle. A client I had been chasing for 2 years suddenly signed a contract worth 5 million!', category: 'financial', likes: 45, comments: 15, featured: true, prayerCount: 28, userAvatar: null },
+    { id: 3, name: 'Pastor David Adeleke', date: '2024-03-05', title: 'Family Restoration', testimony: 'My marriage was on the brink of collapse, but through prayers and counseling at Dominion City, God restored our home.', category: 'family', likes: 67, comments: 23, featured: true, prayerCount: 35, userAvatar: null },
+    { id: 4, name: 'Blessing Eze', date: '2024-02-28', title: 'Delivered from Depression', testimony: 'I struggled with depression for years. Through the Digging Deep service and mentorship, God set me free.', category: 'deliverance', likes: 52, comments: 18, featured: false, prayerCount: 22, userAvatar: null },
   ]);
-
   const [showForm, setShowForm] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [newTestimony, setNewTestimony] = useState({
-    name: '',
-    title: '',
-    testimony: '',
-    category: 'healing',
-    isAnonymous: false,
-    agreeToTerms: false
-  });
   const [likedTestimonies, setLikedTestimonies] = useState([]);
   const [selectedTestimony, setSelectedTestimony] = useState(null);
-
-  const categories = [
-    { id: 'all', name: 'All Testimonies', icon: <FaStar /> },
-    { id: 'healing', name: 'Healing', icon: <FaHeart /> },
-    { id: 'financial', name: 'Financial', icon: <FaHandsHelping /> },
-    { id: 'family', name: 'Family', icon: <FaHome /> },
-    { id: 'deliverance', name: 'Deliverance', icon: <FaPrayingHands /> },
-    { id: 'career', name: 'Career', icon: <FaChurch /> }
-  ];
+  const [newTestimony, setNewTestimony] = useState({ name: '', title: '', testimony: '', category: 'healing', isAnonymous: false, agreeToTerms: false });
 
   useEffect(() => {
-    // Load liked testimonies from localStorage
-    const savedLikes = localStorage.getItem('likedTestimonies');
-    if (savedLikes) {
-      setLikedTestimonies(JSON.parse(savedLikes));
-    }
+    const saved = localStorage.getItem('likedTestimonies');
+    if (saved) setLikedTestimonies(JSON.parse(saved));
   }, []);
 
-  const handleLike = (testimonyId) => {
-    if (likedTestimonies.includes(testimonyId)) {
-      // Unlike
-      setTestimonies(prev => prev.map(t => 
-        t.id === testimonyId ? { ...t, likes: t.likes - 1 } : t
-      ));
-      setLikedTestimonies(prev => prev.filter(id => id !== testimonyId));
-      localStorage.setItem('likedTestimonies', JSON.stringify(likedTestimonies.filter(id => id !== testimonyId)));
+  const handleLike = (id) => {
+    if (likedTestimonies.includes(id)) {
+      setTestimonies((prev) => prev.map((t) => t.id === id ? { ...t, likes: t.likes - 1 } : t));
+      setLikedTestimonies((prev) => {
+        const updated = prev.filter((v) => v !== id);
+        localStorage.setItem('likedTestimonies', JSON.stringify(updated));
+        return updated;
+      });
       toast.info('You removed your like');
     } else {
-      // Like
-      setTestimonies(prev => prev.map(t => 
-        t.id === testimonyId ? { ...t, likes: t.likes + 1 } : t
-      ));
-      setLikedTestimonies(prev => [...prev, testimonyId]);
-      localStorage.setItem('likedTestimonies', JSON.stringify([...likedTestimonies, testimonyId]));
+      setTestimonies((prev) => prev.map((t) => t.id === id ? { ...t, likes: t.likes + 1 } : t));
+      setLikedTestimonies((prev) => {
+        const updated = [...prev, id];
+        localStorage.setItem('likedTestimonies', JSON.stringify(updated));
+        return updated;
+      });
       toast.success('Thank you for encouraging this testimony!');
     }
   };
 
-  const handleSubmitTestimony = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    
-    if (!newTestimony.agreeToTerms) {
-      toast.error('Please agree to the terms before submitting');
-      return;
-    }
-
+    if (!newTestimony.agreeToTerms) { toast.error('Please agree to the terms before submitting'); return; }
     const testimony = {
       id: Date.now(),
       name: newTestimony.isAnonymous ? 'Anonymous' : newTestimony.name,
@@ -130,358 +116,183 @@ const TestimonyForum = () => {
       title: newTestimony.title,
       testimony: newTestimony.testimony,
       category: newTestimony.category,
-      likes: 0,
-      comments: 0,
-      featured: false,
-      prayerCount: 0,
-      userAvatar: null
+      likes: 0, comments: 0, featured: false, prayerCount: 0, userAvatar: null,
     };
-
     setTestimonies([testimony, ...testimonies]);
     setShowForm(false);
-    setNewTestimony({
-      name: '',
-      title: '',
-      testimony: '',
-      category: 'healing',
-      isAnonymous: false,
-      agreeToTerms: false
-    });
+    setNewTestimony({ name: '', title: '', testimony: '', category: 'healing', isAnonymous: false, agreeToTerms: false });
     toast.success('Testimony submitted! It will be reviewed and published soon.');
   };
 
-  const handlePray = (testimonyId) => {
-    setTestimonies(prev => prev.map(t => 
-      t.id === testimonyId ? { ...t, prayerCount: t.prayerCount + 1 } : t
-    ));
+  const handlePray = (id) => {
+    setTestimonies((prev) => prev.map((t) => t.id === id ? { ...t, prayerCount: t.prayerCount + 1 } : t));
     toast.success('Prayer offered for this testimony!');
   };
 
   const handleShare = async (testimony) => {
-    const shareData = {
-      title: testimony.title,
-      text: `Read this testimony from Dominion City: ${testimony.title}`,
-      url: window.location.href
-    };
-    
+    const text = `${testimony.title}\n\n${testimony.testimony}\n\nShared from Dominion City Church`;
     if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-        toast.success('Shared successfully!');
-      } catch (err) {
-        // Copy to clipboard as fallback
-        navigator.clipboard.writeText(`${testimony.title}\n\n${testimony.testimony}\n\nShared from Dominion City Church`);
-        toast.info('Link copied to clipboard!');
-      }
-    } else {
-      navigator.clipboard.writeText(`${testimony.title}\n\n${testimony.testimony}\n\nShared from Dominion City Church`);
-      toast.info('Link copied to clipboard!');
-    }
+      try { await navigator.share({ title: testimony.title, text, url: window.location.href }); } catch { navigator.clipboard.writeText(text); toast.info('Link copied to clipboard!'); }
+    } else { navigator.clipboard.writeText(text); toast.info('Link copied to clipboard!'); }
   };
 
-  const filteredTestimonies = testimonies.filter(testimony => {
-    const matchesCategory = selectedCategory === 'all' || testimony.category === selectedCategory;
-    const matchesSearch = testimony.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          testimony.testimony.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          testimony.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+  const filtered = testimonies.filter((t) => {
+    const matchesCat = selectedCategory === 'all' || t.category === selectedCategory;
+    const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) || t.testimony.toLowerCase().includes(searchQuery.toLowerCase()) || t.name.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCat && matchesSearch;
   });
 
-  const featuredTestimonies = filteredTestimonies.filter(t => t.featured);
-  const regularTestimonies = filteredTestimonies.filter(t => !t.featured);
+  const featured = filtered.filter((t) => t.featured);
+  const regular = filtered.filter((t) => !t.featured);
 
   return (
-    <section className="testimony-forum">
-      <div className="container">
-        <div className="section-header">
-          <span className="section-subtitle">Share Your Story</span>
-          <h2>Testimony Forum</h2>
-          <p>What has God done for you? Share your testimony to encourage others!</p>
-        </div>
+    <Box sx={{ py: { xs: 8, md: 12 } }}>
+      <Container maxWidth="lg">
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
+          <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: 4, display: 'block', mb: 1 }}>
+            Share Your Story
+          </Typography>
+          <Typography variant="h2">Testimony Forum</Typography>
+          <Typography variant="body1" sx={{ color: 'text.secondary', mt: 1 }}>
+            What has God done for you? Share your testimony to encourage others!
+          </Typography>
+        </Box>
 
-        {/* Action Buttons */}
-        <div className="testimony-actions">
-          <button className="btn btn-primary" onClick={() => setShowForm(true)}>
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
+          <Button variant="contained" startIcon={<Plus size={16} />} onClick={() => setShowForm(true)}>
             Share Your Testimony
-          </button>
-        </div>
+          </Button>
+        </Box>
 
-        {/* Search and Filter */}
-        <div className="testimony-filters">
-          <div className="search-box">
-            <FaSearch />
-            <input
-              type="text"
-              placeholder="Search testimonies..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <div className="category-filters">
-            {categories.map(cat => (
-              <button
-                key={cat.id}
-                className={`category-btn ${selectedCategory === cat.id ? 'active' : ''}`}
+        <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" spacing={2} sx={{ mb: 4 }}>
+          <TextField size="small" placeholder="Search testimonies..." value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            InputProps={{ startAdornment: <InputAdornment position="start"><Search size={18} /></InputAdornment> }}
+            sx={{ minWidth: 300, '& .MuiOutlinedInput-root': { borderRadius: 4 } }} />
+          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+            {categories.map((cat) => (
+              <Chip key={cat.id} icon={cat.icon} label={cat.name}
                 onClick={() => setSelectedCategory(cat.id)}
-              >
-                {cat.icon}
-                {cat.name}
-              </button>
+                variant={selectedCategory === cat.id ? 'filled' : 'outlined'}
+                sx={{ fontWeight: 600, bgcolor: selectedCategory === cat.id ? 'primary.main' : 'transparent',
+                  color: selectedCategory === cat.id ? 'white' : 'text.primary', borderColor: 'primary.main' }}
+              />
             ))}
-          </div>
-        </div>
+          </Stack>
+        </Stack>
 
-        {/* Featured Testimonies */}
-        {featuredTestimonies.length > 0 && (
-          <div className="featured-section">
-            <h3>Featured Testimonies</h3>
-            <div className="featured-grid">
-              {featuredTestimonies.map(testimony => (
-                <TestimonyCard
-                  key={testimony.id}
-                  testimony={testimony}
-                  isLiked={likedTestimonies.includes(testimony.id)}
-                  onLike={() => handleLike(testimony.id)}
-                  onPray={() => handlePray(testimony.id)}
-                  onShare={() => handleShare(testimony)}
-                  onView={() => setSelectedTestimony(testimony)}
-                />
+        {featured.length > 0 && (
+          <Box sx={{ mb: 6 }}>
+            <Typography variant="h5" sx={{ fontFamily: "'Cormorant Garamond', serif", mb: 3 }}>Featured Testimonies</Typography>
+            <Stack spacing={2}>
+              {featured.map((t) => (
+                <TestimonyCard key={t.id} testimony={t} isLiked={likedTestimonies.includes(t.id)}
+                  onLike={() => handleLike(t.id)} onPray={() => handlePray(t.id)}
+                  onShare={() => handleShare(t)} onView={() => setSelectedTestimony(t)} />
               ))}
-            </div>
-          </div>
+            </Stack>
+          </Box>
         )}
 
-        {/* All Testimonies */}
-        <div className="testimonies-grid">
-          {regularTestimonies.map(testimony => (
-            <TestimonyCard
-              key={testimony.id}
-              testimony={testimony}
-              isLiked={likedTestimonies.includes(testimony.id)}
-              onLike={() => handleLike(testimony.id)}
-              onPray={() => handlePray(testimony.id)}
-              onShare={() => handleShare(testimony)}
-              onView={() => setSelectedTestimony(testimony)}
-            />
+        <Stack spacing={2}>
+          {regular.map((t) => (
+            <TestimonyCard key={t.id} testimony={t} isLiked={likedTestimonies.includes(t.id)}
+              onLike={() => handleLike(t.id)} onPray={() => handlePray(t.id)}
+              onShare={() => handleShare(t)} onView={() => setSelectedTestimony(t)} />
           ))}
-        </div>
+        </Stack>
 
-        {/* Empty State */}
-        {filteredTestimonies.length === 0 && (
-          <div className="empty-state">
-            <FaStar />
-            <h3>No testimonies found</h3>
-            <p>Be the first to share what God has done for you!</p>
-            <button className="btn btn-primary" onClick={() => setShowForm(true)}>
-              Share Your Testimony
-            </button>
-          </div>
+        {filtered.length === 0 && (
+          <Box sx={{ textAlign: 'center', py: 8 }}>
+            <Star size={48} style={{ color: '#4169E1', marginBottom: 16 }} />
+            <Typography variant="h6">No testimonies found</Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>Be the first to share what God has done for you!</Typography>
+            <Button variant="contained" onClick={() => setShowForm(true)}>Share Your Testimony</Button>
+          </Box>
         )}
-      </div>
+      </Container>
 
-      {/* Submit Testimony Modal */}
-      <AnimatePresence>
-        {showForm && (
-          <motion.div
-            className="modal-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowForm(false)}
-          >
-            <motion.div
-              className="modal-content"
-              initial={{ scale: 0.9, y: 50 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 50 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button className="modal-close" onClick={() => setShowForm(false)}>
-                <FaTimes />
-              </button>
-              <h3>Share Your Testimony</h3>
-              <p>Tell us what God has done in your life</p>
+      <Dialog open={showForm} onClose={() => setShowForm(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 4 } }}>
+        <DialogTitle sx={{ fontFamily: "'Cormorant Garamond', serif" }}>
+          Share Your Testimony
+        </DialogTitle>
+        <Box component="form" onSubmit={handleSubmit}>
+          <DialogContent>
+            <Stack spacing={2}>
+              <TextField fullWidth label="Your Name" value={newTestimony.name}
+                onChange={(e) => setNewTestimony({ ...newTestimony, name: e.target.value })}
+                disabled={newTestimony.isAnonymous} required={!newTestimony.isAnonymous} />
+              <FormControlLabel control={<Checkbox checked={newTestimony.isAnonymous}
+                onChange={(e) => setNewTestimony({ ...newTestimony, isAnonymous: e.target.checked })} />}
+                label="Post anonymously" />
+              <TextField fullWidth label="Testimony Title" value={newTestimony.title}
+                onChange={(e) => setNewTestimony({ ...newTestimony, title: e.target.value })} required />
+              <TextField select fullWidth label="Category" value={newTestimony.category}
+                onChange={(e) => setNewTestimony({ ...newTestimony, category: e.target.value })} required>
+                {categories.filter((c) => c.id !== 'all').map((cat) => (
+                  <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
+                ))}
+              </TextField>
+              <TextField fullWidth multiline rows={5} label="Share your testimony..." value={newTestimony.testimony}
+                onChange={(e) => setNewTestimony({ ...newTestimony, testimony: e.target.value })} required />
+              <FormControlLabel control={<Checkbox checked={newTestimony.agreeToTerms}
+                onChange={(e) => setNewTestimony({ ...newTestimony, agreeToTerms: e.target.checked })} />}
+                label="I confirm that this testimony is true and agree to share it publicly" />
+            </Stack>
+          </DialogContent>
+          <DialogActions sx={{ px: 3, pb: 3 }}>
+            <Button onClick={() => setShowForm(false)}>Cancel</Button>
+            <Button type="submit" variant="contained">Submit Testimony</Button>
+          </DialogActions>
+        </Box>
+      </Dialog>
 
-              <form onSubmit={handleSubmitTestimony}>
-                <div className="form-group">
-                  <input
-                    type="text"
-                    placeholder="Your Name"
-                    value={newTestimony.name}
-                    onChange={(e) => setNewTestimony({ ...newTestimony, name: e.target.value })}
-                    required={!newTestimony.isAnonymous}
-                    disabled={newTestimony.isAnonymous}
-                  />
-                </div>
-
-                <div className="form-group checkbox">
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={newTestimony.isAnonymous}
-                      onChange={(e) => setNewTestimony({ ...newTestimony, isAnonymous: e.target.checked })}
-                    />
-                    Post anonymously
-                  </label>
-                </div>
-
-                <div className="form-group">
-                  <input
-                    type="text"
-                    placeholder="Testimony Title"
-                    value={newTestimony.title}
-                    onChange={(e) => setNewTestimony({ ...newTestimony, title: e.target.value })}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <select
-                    value={newTestimony.category}
-                    onChange={(e) => setNewTestimony({ ...newTestimony, category: e.target.value })}
-                    required
-                  >
-                    {categories.filter(c => c.id !== 'all').map(cat => (
-                      <option key={cat.id} value={cat.id}>{cat.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <textarea
-                    rows="6"
-                    placeholder="Share your testimony..."
-                    value={newTestimony.testimony}
-                    onChange={(e) => setNewTestimony({ ...newTestimony, testimony: e.target.value })}
-                    required
-                  ></textarea>
-                </div>
-
-                <div className="form-group checkbox">
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={newTestimony.agreeToTerms}
-                      onChange={(e) => setNewTestimony({ ...newTestimony, agreeToTerms: e.target.checked })}
-                      required
-                    />
-                    I confirm that this testimony is true and agree to share it publicly
-                  </label>
-                </div>
-
-                <button type="submit" className="btn btn-primary btn-block">
-                  Submit Testimony
-                </button>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* View Testimony Modal */}
-      <AnimatePresence>
+      <Dialog open={!!selectedTestimony} onClose={() => setSelectedTestimony(null)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 4 } }}>
         {selectedTestimony && (
-          <motion.div
-            className="modal-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedTestimony(null)}
-          >
-            <motion.div
-              className="modal-content modal-large"
-              initial={{ scale: 0.9, y: 50 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 50 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button className="modal-close" onClick={() => setSelectedTestimony(null)}>
-                <FaTimes />
-              </button>
-              <div className="testimony-detail">
-                <div className="testimony-header">
-                  <div className="testimony-author">
-                    <FaUser />
-                    <span>{selectedTestimony.name}</span>
-                    <FaCalendar />
-                    <span>{new Date(selectedTestimony.date).toLocaleDateString()}</span>
-                  </div>
-                  <div className="testimony-category">
-                    {categories.find(c => c.id === selectedTestimony.category)?.icon}
-                    <span>{categories.find(c => c.id === selectedTestimony.category)?.name}</span>
-                  </div>
-                </div>
-                <h2>{selectedTestimony.title}</h2>
-                <p className="testimony-text">{selectedTestimony.testimony}</p>
-                <div className="testimony-stats">
-                  <button onClick={() => handleLike(selectedTestimony.id)}>
-                    <FaThumbsUp /> {selectedTestimony.likes} People Encouraged
-                  </button>
-                  <button onClick={() => handlePray(selectedTestimony.id)}>
-                    <FaPrayingHands /> {selectedTestimony.prayerCount} Prayed
-                  </button>
-                  <button onClick={() => handleShare(selectedTestimony)}>
-                    <FaShare /> Share
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
+          <>
+            <DialogTitle sx={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Avatar sx={{ bgcolor: alpha('#4169E1', 0.2), color: 'primary.main', width: 32, height: 32 }}>
+                  <User size={16} />
+                </Avatar>
+                <Box>
+                  <Typography variant="subtitle2">{selectedTestimony.name}</Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                    {new Date(selectedTestimony.date).toLocaleDateString()}
+                  </Typography>
+                </Box>
+                <Box sx={{ ml: 'auto' }}>
+                  <Chip size="small" label={categories.find((c) => c.id === selectedTestimony.category)?.name} />
+                </Box>
+              </Stack>
+            </DialogTitle>
+            <DialogContent>
+              <Typography variant="h5" sx={{ fontFamily: "'Cormorant Garamond', serif", mb: 2 }}>
+                {selectedTestimony.title}
+              </Typography>
+              <Typography variant="body1" sx={{ color: 'text.secondary', mb: 3 }}>
+                {selectedTestimony.testimony}
+              </Typography>
+              <Stack direction="row" spacing={2}>
+                <Button startIcon={<ThumbsUp size={16} />} variant={likedTestimonies.includes(selectedTestimony.id) ? 'contained' : 'outlined'}
+                  onClick={() => handleLike(selectedTestimony.id)}>
+                  {selectedTestimony.likes} Encouraged
+                </Button>
+                <Button startIcon={<HelpingHand size={16} />} variant="outlined" onClick={() => handlePray(selectedTestimony.id)}>
+                  {selectedTestimony.prayerCount} Prayed
+                </Button>
+                <Button startIcon={<Share2 size={16} />} variant="outlined" onClick={() => handleShare(selectedTestimony)}>
+                  Share
+                </Button>
+              </Stack>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setSelectedTestimony(null)}>Close</Button>
+            </DialogActions>
+          </>
         )}
-      </AnimatePresence>
-    </section>
-  );
-};
-
-// Testimony Card Component
-const TestimonyCard = ({ testimony, isLiked, onLike, onPray, onShare, onView }) => {
-  const categories = {
-    healing: { icon: <FaHeart />, color: '#4CAF50' },
-    financial: { icon: <FaHandsHelping />, color: '#FFC107' },
-    family: { icon: <FaHome />, color: '#9C27B0' },
-    deliverance: { icon: <FaPrayingHands />, color: '#F44336' },
-    career: { icon: <FaChurch />, color: '#2196F3' }
-  };
-
-  const category = categories[testimony.category] || categories.healing;
-
-  return (
-    <motion.div
-      className="testimony-card"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5 }}
-    >
-      {testimony.featured && <div className="featured-badge">⭐ Featured</div>}
-      <div className="testimony-card-header">
-        <div className="testimony-avatar">
-          <FaUser />
-        </div>
-        <div>
-          <h4>{testimony.name}</h4>
-          <span className="testimony-date">{new Date(testimony.date).toLocaleDateString()}</span>
-        </div>
-        <div className="testimony-category-icon" style={{ background: `${category.color}20`, color: category.color }}>
-          {category.icon}
-        </div>
-      </div>
-      <h3>{testimony.title}</h3>
-      <p className="testimony-excerpt">{testimony.testimony.substring(0, 120)}...</p>
-      <div className="testimony-card-actions">
-        <button className={isLiked ? 'liked' : ''} onClick={onLike}>
-          <FaThumbsUp /> {testimony.likes}
-        </button>
-        <button onClick={onPray}>
-          <FaPrayingHands /> {testimony.prayerCount}
-        </button>
-        <button onClick={onShare}>
-          <FaShare />
-        </button>
-        <button className="read-more" onClick={onView}>
-          Read More
-        </button>
-      </div>
-    </motion.div>
+      </Dialog>
+    </Box>
   );
 };
 

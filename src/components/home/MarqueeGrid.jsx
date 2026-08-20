@@ -1,164 +1,34 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import { Box, Container, Typography, IconButton, Stack } from '@mui/material';
 import { motion, useInView } from 'framer-motion';
-import './MarqueeGrid.css';
 
 const marqueeImages = [
-  { 
-    src: '/images/grid/Sunday-service-.jpeg', 
-    label: 'Sunday Service',
-    //  description: 'Sunday Service',
-    category: 'Free Transportaion'
-  },
-  { 
-    src: '/images/grid/Sunday-service.jpeg', 
-    label: 'Sunday Service',
-    description: '29th March, 2026',
-    category: 'Making the most of Time and Seasons'
-  },
-  { 
-    src: '/images/grid/mpa1.jpeg', 
-    label: 'Dr. David Ogbueli',
-    description: 'Sunday Service',
-    category: 'Activating the riches of God"s redemption.'
-  },
-  { 
-    src: '/images/grid/ss1.jpeg', 
-    // label: '',
-    description: 'We are happy to have you!',
-    category: 'Welcome to Church!'
-  },
-  { 
-    src: '/images/grid/ss2.jpeg', 
-    // // label: 'The Edge Youth',
-    //  description: 'Sunday Service',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/ss3.jpeg', 
-    // // label: 'Baptism Service',
-    // description: 'Free Transportation',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/ss4.jpeg', 
-    // // label: 'Prayer Meeting',
-    //  description: 'Sunday Service',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/ss7.jpeg', 
-    // // label: 'Children\'s Ministry',
-    // description: 'Free Transportation',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/mpa2.jpeg', 
-    // // label: 'Women of Impact',
-    //  description: 'Sunday Service',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/praiz12.jpeg', 
-    label: 'Enter his gate with thanksgiving...',
-    // description: '',
-    category: 'PRAISE'
-  },
-  { 
-    src: '/images/grid/praiz14.jpeg', 
-    label: '...and into his court with praise.',
-    // description: '',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/praiz15.jpeg', 
-    // // label: 'Community Impact',
-    // description: 'Free Transportation',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/praiz5.jpeg', 
-    // label: 'The Edge Youth',
-    //  description: 'Sunday Service',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/praiz16.jpeg', 
-    // // label: 'Baptism Service',
-    // description: 'Free Transportation',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/mpa3.jpeg', 
-    // // label: 'Prayer Meeting',
-    //  description: 'Sunday Service',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/wor10.jpeg', 
-    label: 'We bow before you Lord...',
-    // description: '',
-    category: 'WORSHIP'
-  },
-  { 
-    src: '/images/grid/wor17.jpeg', 
-    label: '...and we honour you...',
-    //  description: '',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/wor2.jpeg', 
-    label: '... with lifted hands...',
-    // description: '',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/wor15.jpeg', 
-    label: '...worship you...',
-    // description: '',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/wor9.jpeg', 
-    // // label: 'Community Impact',
-    // description: 'Free Transportation',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/mpa4.jpeg', 
-    // // label: 'The Edge Youth',
-    //  description: 'Sunday Service',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/word1.jpeg', 
-    label: 'Activating the riches of God"s redemption.',
-    description: 'I am rich in Christ!',
-    category: 'WORD'
-  },
-  { 
-    src: '/images/grid/word2.jpeg', 
-    // // label: 'Prayer Meeting',
-    //  description: 'Sunday Service',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/word4.jpeg', 
-    // label: 'Children\'s Ministry',
-    // description: 'Free Transportation',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/word5.jpeg', 
-    // // label: 'Women of Impact',
-    //  description: 'Sunday Service',
-    // category: '29th March, 2026'
-  },
-  { 
-    src: '/images/grid/word7.jpeg', 
-    // // label: 'Men of Honour',
-    // description: 'Free Transportation',
-    // category: '29th March, 2026'
-  },
+  { src: '/images/grid/Sunday-service-.jpeg', label: 'Sunday Service', category: 'Free Transportaion' },
+  { src: '/images/grid/Sunday-service.jpeg', label: 'Sunday Service', description: '29th March, 2026', category: 'Making the most of Time and Seasons' },
+  { src: '/images/grid/mpa1.jpeg', label: 'Dr. David Ogbueli', description: 'Sunday Service', category: 'Activating the riches of God\'s redemption.' },
+  { src: '/images/grid/ss1.jpeg', description: 'We are happy to have you!', category: 'Welcome to Church!' },
+  { src: '/images/grid/ss2.jpeg' },
+  { src: '/images/grid/ss3.jpeg' },
+  { src: '/images/grid/ss4.jpeg' },
+  { src: '/images/grid/ss7.jpeg' },
+  { src: '/images/grid/mpa2.jpeg' },
+  { src: '/images/grid/praiz12.jpeg', label: 'Enter his gate with thanksgiving...', category: 'PRAISE' },
+  { src: '/images/grid/praiz14.jpeg', label: '...and into his court with praise.' },
+  { src: '/images/grid/praiz15.jpeg' },
+  { src: '/images/grid/praiz5.jpeg' },
+  { src: '/images/grid/praiz16.jpeg' },
+  { src: '/images/grid/mpa3.jpeg' },
+  { src: '/images/grid/wor10.jpeg', label: 'We bow before you Lord...', category: 'WORSHIP' },
+  { src: '/images/grid/wor17.jpeg', label: '...and we honour you...' },
+  { src: '/images/grid/wor2.jpeg', label: '... with lifted hands...' },
+  { src: '/images/grid/wor15.jpeg', label: '...worship you...' },
+  { src: '/images/grid/wor9.jpeg' },
+  { src: '/images/grid/mpa4.jpeg' },
+  { src: '/images/grid/word1.jpeg', label: 'Activating the riches of God\'s redemption.', description: 'I am rich in Christ!', category: 'WORD' },
+  { src: '/images/grid/word2.jpeg' },
+  { src: '/images/grid/word4.jpeg' },
+  { src: '/images/grid/word5.jpeg' },
+  { src: '/images/grid/word7.jpeg' },
 ];
 
 const MarqueeGrid = () => {
@@ -187,61 +57,140 @@ const MarqueeGrid = () => {
     };
 
     animationId = requestAnimationFrame(animate);
-
     return () => cancelAnimationFrame(animationId);
   }, [isHovered, speed]);
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
-
   return (
-    <section className="marquee-grid-section" ref={sectionRef}>
-      <div className="container">
-        <motion.div 
-          className="marquee-header"
+    <Box ref={sectionRef} sx={{ py: { xs: 6, md: 8 }, overflow: 'hidden' }}>
+      <Container maxWidth="lg">
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          <span className="section-subtitle">Our Community</span>
-          <h2>Moments That Matter</h2>
-          <p>Experience the vibrant life of Dominion City through our moments</p>
+          <Box sx={{ textAlign: 'center', mb: 4 }}>
+            <Typography
+              variant="overline"
+              sx={{ color: 'primary.main', letterSpacing: 4, display: 'block', mb: 1 }}
+            >
+              Our Community
+            </Typography>
+            <Typography variant="h2" sx={{ fontSize: { xs: '2rem', md: '3rem' }, mb: 1 }}>
+              Moments That Matter
+            </Typography>
+            <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+              Experience the vibrant life of Dominion City through our moments
+            </Typography>
+          </Box>
         </motion.div>
-      </div>
+      </Container>
 
-      <div className="marquee-container">
-        <div
-          className="marquee-track"
+      <Box
+        sx={(theme) => ({
+          overflow: 'hidden',
+          position: 'relative',
+          '&::before, &::after': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            width: 80,
+            zIndex: 2,
+            pointerEvents: 'none',
+          },
+          '&::before': { left: 0, background: `linear-gradient(90deg, ${theme.palette.background.default}, transparent)` },
+          '&::after': { right: 0, background: `linear-gradient(-90deg, ${theme.palette.background.default}, transparent)` },
+        })}
+      >
+        <Box
           ref={trackRef}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          sx={{ display: 'flex', gap: 2, py: 2 }}
         >
           {[...marqueeImages, ...marqueeImages, ...marqueeImages].map((item, index) => (
-            <div key={index} className="marquee-item-wrapper">
-              <div className="marquee-item">
-                <img src={item.src} alt={item.label} loading="lazy" />
-              </div>
-              <div className="marquee-caption">
-                <span className="marquee-category">{item.category}</span>
-                <h4>{item.label}</h4>
-                <p>{item.description}</p>
-              </div>
-            </div>
+            <Box
+              key={index}
+              sx={{
+                minWidth: { xs: 200, md: 260 },
+                borderRadius: 3,
+                overflow: 'hidden',
+                position: 'relative',
+                cursor: 'pointer',
+                '&:hover img': { transform: 'scale(1.1)' },
+                '&:hover .caption': { opacity: 1 },
+              }}
+            >
+              <Box
+                component="img"
+                src={item.src}
+                alt={item.label || ''}
+                loading="lazy"
+                sx={{
+                  width: '100%',
+                  height: { xs: 200, md: 260 },
+                  objectFit: 'cover',
+                  transition: 'transform 0.4s ease',
+                }}
+              />
+              <Box
+                className="caption"
+                sx={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  p: 2,
+                  background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
+                  opacity: { xs: 1, md: 0 },
+                  transition: 'opacity 0.3s ease',
+                }}
+              >
+                {item.category && (
+                  <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 600, display: 'block' }}>
+                    {item.category}
+                  </Typography>
+                )}
+                {item.label && (
+                  <Typography variant="body2" sx={{ color: '#FFFFFF', fontWeight: 500 }}>
+                    {item.label}
+                  </Typography>
+                )}
+                {item.description && (
+                  <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                    {item.description}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
           ))}
-        </div>
-      </div>
+        </Box>
+      </Box>
 
-      <div className="marquee-controls">
-        <button className="control-btn" onClick={() => setSpeed(0.3)} title="Slow">🐢</button>
-        <button className="control-btn active" onClick={() => setSpeed(0.5)} title="Normal">●</button>
-        <button className="control-btn" onClick={() => setSpeed(0.8)} title="Fast">🐇</button>
-      </div>
-    </section>
+      <Stack direction="row" justifyContent="center" spacing={1} sx={{ mt: 3 }}>
+        {[
+          { speed: 0.3, label: 'Slow' },
+          { speed: 0.5, label: 'Normal' },
+          { speed: 0.8, label: 'Fast' },
+        ].map((item) => (
+          <IconButton
+            key={item.speed}
+            onClick={() => setSpeed(item.speed)}
+            sx={{
+              width: 36,
+              height: 36,
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              bgcolor: speed === item.speed ? 'primary.main' : 'action.hover',
+              color: speed === item.speed ? 'white' : 'text.primary',
+              '&:hover': { bgcolor: 'primary.main', color: 'white' },
+            }}
+          >
+            {item.label[0]}
+          </IconButton>
+        ))}
+      </Stack>
+    </Box>
   );
 };
 

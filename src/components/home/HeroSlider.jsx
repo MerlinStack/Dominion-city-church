@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaChevronLeft, FaChevronRight, FaPlay } from 'react-icons/fa';
+import { Box, Container, Typography, Button, Stack, IconButton } from '@mui/material';
+import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const slides = [
   {
     id: 1,
     image: '/images/hero/year-of-eagle.jpeg',
+    bgPosition: 'center 10%',
     title: 'Welcome to Dominion City',
     subtitle: 'A place where lives are transformed, destinies are fulfilled, and leaders are raised.',
     buttons: [
       { text: 'PLAN YOUR VISIT', link: '/contact', primary: true },
-      { text: 'WATCH LIVE', link: '/sermons', primary: false, icon: <FaPlay /> },
+      { text: 'WATCH LIVE', link: '/sermons', primary: false },
     ],
   },
   {
     id: 2,
     image: '/images/hero/dr-david-ogbueli.jpeg',
+    bgPosition: 'center 10%',
     title: 'With Dr. David Ogbueli',
     subtitle: "Experience the transformative power of God's Word through prophetic teaching.",
     buttons: [
@@ -26,6 +30,7 @@ const slides = [
   {
     id: 3,
     image: '/images/hero/congregation.jpeg',
+    bgPosition: 'center 40%',
     title: 'Join Our Growing Family',
     subtitle: 'Be part of a vibrant community of believers passionate about God.',
     buttons: [
@@ -36,226 +41,186 @@ const slides = [
 ];
 
 const HeroSlider = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [current, setCurrent] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      setCurrent((prev) => (prev + 1) % slides.length);
     }, 5000);
     return () => clearInterval(timer);
   }, []);
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  const slide = slides[current];
 
   return (
-    <div
-      className="hero-slider"
-      style={{
+    <Box
+      sx={{
         position: 'relative',
-        height: '100vh',
+        height: { xs: '65vh', md: '85vh' },
         overflow: 'hidden',
-        marginTop: 0,
       }}
     >
-      {slides.map((slide, index) => (
-        <div
+      <AnimatePresence mode="wait">
+        <motion.div
           key={slide.id}
-          className={`slide ${index === currentSlide ? 'active' : ''}`}
+          initial={{ opacity: 0, scale: 1.1 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.7 }}
           style={{
             position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            opacity: index === currentSlide ? 1 : 0,
-            transition: 'opacity 0.8s ease',
+            inset: 0,
+            backgroundImage: `url(${slide.image})`,
+            backgroundSize: 'cover',
+            backgroundPosition: slide.bgPosition,
+            backgroundRepeat: 'no-repeat',
           }}
+        />
+      </AnimatePresence>
+
+      <Box
+        sx={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 100%)',
+        }}
+      />
+
+      <Container
+        maxWidth="lg"
+        sx={{
+          position: 'relative',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          zIndex: 2,
+        }}
+      >
+        <motion.div
+          key={slide.id + '-content'}
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
         >
-          <div
-            className="slide-bg"
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              backgroundImage: `url(${slide.image})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-            }}
-          />
-          <div
-            className="slide-overlay"
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              background: 'linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 100%)',
-              zIndex: 1,
-            }}
-          />
-          <div
-            className="slide-content"
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              textAlign: 'center',
-              color: 'white',
-              width: '90%',
-              maxWidth: '800px',
-              zIndex: 2,
+          <Typography
+            variant="h1"
+            sx={{
+              fontSize: { xs: '2.5rem', md: '4.5rem' },
+              color: '#FFFFFF',
+              mb: 2,
+              textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+              lineHeight: 1.2,
             }}
           >
-            <h1
-              style={{
-                fontSize: '64px',
-                marginBottom: '20px',
-                fontFamily: 'var(--font-primary)',
-                textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-                textAlign: 'center',
-                lineHeight: '1.2',
-              }}
-            >
-              {slide.title}
-            </h1>
-            <p
-              style={{
-                fontSize: '18px',
-                marginBottom: '40px',
-                opacity: 0.9,
-                maxWidth: '600px',
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                textAlign: 'center',
-                lineHeight: '1.6',
-              }}
-            >
-              {slide.subtitle}
-            </p>
-            <div
-              style={{
-                display: 'flex',
-                gap: '20px',
-                justifyContent: 'center',
-                flexWrap: 'wrap',
-              }}
-            >
-              {slide.buttons.map((btn, idx) => (
-                <Link
-                  key={idx}
-                  to={btn.link}
-                  className={`btn ${btn.primary ? 'btn-primary' : 'btn-outline'}`}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '14px 36px',
-                    borderRadius: '40px',
-                    textDecoration: 'none',
-                    fontWeight: '600',
-                    fontSize: '14px',
-                    letterSpacing: '1px',
-                    textTransform: 'uppercase',
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  {btn.icon && <span style={{ marginRight: '5px' }}>{btn.icon}</span>}
-                  {btn.text}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      ))}
+            {slide.title}
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              color: '#FFFFFF',
+              mb: 4,
+              maxWidth: 600,
+              opacity: 0.9,
+              textShadow: '1px 1px 3px rgba(0,0,0,0.5)',
+              fontWeight: 300,
+              fontSize: { xs: '1rem', md: '1.25rem' },
+            }}
+          >
+            {slide.subtitle}
+          </Typography>
+          <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
+            {slide.buttons.map((btn, idx) => (
+              <Button
+                key={idx}
+                component={Link}
+                to={btn.link}
+                variant={btn.primary ? 'contained' : 'outlined'}
+                startIcon={!btn.primary ? <Play size={16} /> : undefined}
+                sx={{
+                  borderColor: '#FFFFFF',
+                  color: btn.primary ? undefined : '#FFFFFF',
+                  borderWidth: 2,
+                  '&:hover': btn.primary
+                    ? {
+                        bgcolor: 'transparent',
+                        borderColor: 'primary.main',
+                        color: 'primary.main',
+                        boxShadow: 'none',
+                      }
+                    : {
+                        bgcolor: '#FFFFFF',
+                        color: 'primary.main',
+                      },
+                }}
+              >
+                {btn.text}
+              </Button>
+            ))}
+          </Stack>
+        </motion.div>
+      </Container>
 
-      <button
-        onClick={prevSlide}
-        style={{
+      <IconButton
+        onClick={() => setCurrent((prev) => (prev - 1 + slides.length) % slides.length)}
+        sx={{
           position: 'absolute',
+          left: { xs: 8, md: 24 },
           top: '50%',
-          left: '30px',
           transform: 'translateY(-50%)',
-          width: '50px',
-          height: '50px',
-          borderRadius: '50%',
-          background: 'rgba(65,105,225,0.2)',
-          border: '1px solid var(--primary-blue)',
-          color: 'var(--primary-blue)',
-          cursor: 'pointer',
-          zIndex: 10,
-          transition: 'all 0.3s ease',
-          backdropFilter: 'blur(5px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '20px',
+          color: 'white',
+          bgcolor: 'rgba(255,255,255,0.15)',
+          backdropFilter: 'blur(4px)',
+          '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' },
+          zIndex: 3,
         }}
       >
-        <FaChevronLeft />
-      </button>
+        <ChevronLeft />
+      </IconButton>
 
-      <button
-        onClick={nextSlide}
-        style={{
+      <IconButton
+        onClick={() => setCurrent((prev) => (prev + 1) % slides.length)}
+        sx={{
           position: 'absolute',
+          right: { xs: 8, md: 24 },
           top: '50%',
-          right: '30px',
           transform: 'translateY(-50%)',
-          width: '50px',
-          height: '50px',
-          borderRadius: '50%',
-          background: 'rgba(65,105,225,0.2)',
-          border: '1px solid var(--primary-blue)',
-          color: 'var(--primary-blue)',
-          cursor: 'pointer',
-          zIndex: 10,
-          transition: 'all 0.3s ease',
-          backdropFilter: 'blur(5px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '20px',
+          color: 'white',
+          bgcolor: 'rgba(255,255,255,0.15)',
+          backdropFilter: 'blur(4px)',
+          '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' },
+          zIndex: 3,
         }}
       >
-        <FaChevronRight />
-      </button>
+        <ChevronRight />
+      </IconButton>
 
-      <div
-        className="slider-dots"
-        style={{
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{
           position: 'absolute',
-          bottom: '30px',
+          bottom: 40,
           left: '50%',
           transform: 'translateX(-50%)',
-          display: 'flex',
-          gap: '12px',
-          zIndex: 10,
+          zIndex: 3,
         }}
       >
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            className={`dot ${index === currentSlide ? 'active' : ''}`}
-            onClick={() => setCurrentSlide(index)}
-            style={{
-              width: '12px',
-              height: '12px',
-              borderRadius: '50%',
-              background: index === currentSlide ? 'var(--primary-blue)' : 'rgba(255,255,255,0.5)',
-              border: 'none',
+        {slides.map((_, idx) => (
+          <Box
+            key={idx}
+            onClick={() => setCurrent(idx)}
+            sx={{
+              width: idx === current ? 32 : 12,
+              height: 12,
+              borderRadius: 6,
+              bgcolor: idx === current ? '#FFFFFF' : 'rgba(255,255,255,0.5)',
               cursor: 'pointer',
               transition: 'all 0.3s ease',
             }}
           />
         ))}
-      </div>
-    </div>
+      </Stack>
+    </Box>
   );
 };
 

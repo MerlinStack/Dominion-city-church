@@ -1,46 +1,26 @@
-// src/pages/Admin.jsx
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaPlus, FaEdit, FaTrash, FaCheck } from 'react-icons/fa';
-import { useAdmin } from '../context/AdminContext';
-// eslint-disable-next-line no-unused-vars
-import { toast } from 'react-toastify';
-import './Admin.css';
+import { Box, Container, Typography, Button, Stack, TextField, Tabs, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@mui/material';
+import { motion } from 'framer-motion';
+import { Plus, Edit, Trash2, Check, LogOut } from 'lucide-react';
+import { useAdminStore } from '../stores/useAdminStore';
+
+const TabPanel = ({ children, value, index }) => (
+  <div role="tabpanel" hidden={value !== index}>
+    {value === index && <Box sx={{ pt: 3 }}>{children}</Box>}
+  </div>
+);
 
 const Admin = () => {
-  const [activeTab, setActiveTab] = useState('events');
+  const { isAuthenticated, login, logout, events, addEvent, updateEvent, deleteEvent, testimonies, approveTestimony, deleteTestimony, prayerRequests, deletePrayerRequest } = useAdminStore();
+  const [tab, setTab] = useState(0);
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-  const [loginCredentials, setLoginCredentials] = useState({ username: '', password: '' });
-  
-  const {
-    isAuthenticated,
-    login,
-    logout,
-    events,
-    addEvent,
-    updateEvent,
-    deleteEvent,
-    testimonies,
-    approveTestimony,
-    deleteTestimony,
-    prayerRequests,
-    deletePrayerRequest
-    // Removed sermons and addSermon since they're not used
-  } = useAdmin();
-
-  const [formData, setFormData] = useState({
-    title: '',
-    date: '',
-    time: '',
-    location: '',
-    description: '',
-    category: ''
-  });
+  const [loginCreds, setLoginCreds] = useState({ username: '', password: '' });
+  const [formData, setFormData] = useState({ title: '', date: '', time: '', location: '', description: '', category: '' });
 
   const handleLogin = (e) => {
     e.preventDefault();
-    login(loginCredentials.username, loginCredentials.password);
+    login(loginCreds.username, loginCreds.password);
   };
 
   const handleFormSubmit = (e) => {
@@ -52,213 +32,173 @@ const Admin = () => {
     }
     setShowForm(false);
     setEditingItem(null);
-    setFormData({
-      title: '',
-      date: '',
-      time: '',
-      location: '',
-      description: '',
-      category: ''
-    });
+    setFormData({ title: '', date: '', time: '', location: '', description: '', category: '' });
   };
 
   const handleEdit = (item) => {
     setEditingItem(item);
-    setFormData(item);
+    setFormData({
+      title: item.title || '',
+      date: item.date || '',
+      time: item.time || '',
+      location: item.location || '',
+      description: item.description || '',
+      category: item.category || '',
+    });
     setShowForm(true);
   };
 
   if (!isAuthenticated) {
     return (
-      <div className="admin-login">
-        <div className="login-container">
-          <h2>Admin Login</h2>
-          <form onSubmit={handleLogin}>
-            <input
-              type="text"
-              placeholder="Username"
-              value={loginCredentials.username}
-              onChange={(e) => setLoginCredentials({ ...loginCredentials, username: e.target.value })}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={loginCredentials.password}
-              onChange={(e) => setLoginCredentials({ ...loginCredentials, password: e.target.value })}
-            />
-            <button type="submit" className="btn btn-primary">Login</button>
-          </form>
-        </div>
-      </div>
+      <Box sx={{ pt: '80px', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: (theme) =>
+        theme.palette.mode === 'dark' ? 'linear-gradient(135deg, #000000, #1E3A8A)' : 'linear-gradient(135deg, #F8FAFC, #E8F0FE)',
+      }}>
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
+          <Box component="form" onSubmit={handleLogin} sx={{ p: 5, borderRadius: 4, bgcolor: 'background.paper', maxWidth: 400, mx: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}>
+            <Typography variant="h4" sx={{ textAlign: 'center', mb: 3, fontFamily: "'Cormorant Garamond', serif" }}>Admin Login</Typography>
+            <Stack spacing={2}>
+              <TextField fullWidth label="Username" value={loginCreds.username}
+                onChange={(e) => setLoginCreds({ ...loginCreds, username: e.target.value })} required />
+              <TextField fullWidth label="Password" type="password" value={loginCreds.password}
+                onChange={(e) => setLoginCreds({ ...loginCreds, password: e.target.value })} required />
+              <Button type="submit" variant="contained" size="large" fullWidth>Login</Button>
+            </Stack>
+          </Box>
+        </motion.div>
+      </Box>
     );
   }
 
   return (
-    <div className="admin-dashboard">
-      <div className="admin-header">
-        <h1>Admin Dashboard</h1>
-        <button onClick={logout} className="btn btn-outline">Logout</button>
-      </div>
+    <Box sx={{ pt: '80px', minHeight: '100vh' }}>
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+          <Typography variant="h3" sx={{ fontFamily: "'Cormorant Garamond', serif" }}>Admin Dashboard</Typography>
+          <Button variant="outlined" startIcon={<LogOut size={16} />} onClick={logout}>Logout</Button>
+        </Stack>
 
-      <div className="admin-tabs">
-        <button className={activeTab === 'events' ? 'active' : ''} onClick={() => setActiveTab('events')}>
-          Events
-        </button>
-        <button className={activeTab === 'testimonies' ? 'active' : ''} onClick={() => setActiveTab('testimonies')}>
-          Testimonies
-        </button>
-        <button className={activeTab === 'prayers' ? 'active' : ''} onClick={() => setActiveTab('prayers')}>
-          Prayer Requests
-        </button>
-        <button className={activeTab === 'sermons' ? 'active' : ''} onClick={() => setActiveTab('sermons')}>
-          Sermons
-        </button>
-      </div>
+        <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2, '& .MuiTab-root': { fontWeight: 600 } }}>
+          <Tab label="Events" />
+          <Tab label="Testimonies" />
+          <Tab label="Prayer Requests" />
+        </Tabs>
 
-      <div className="admin-content">
-        {activeTab === 'events' && (
-          <>
-            <button className="btn btn-primary add-btn" onClick={() => { setShowForm(true); setEditingItem(null); }}>
-              <FaPlus /> Add Event
-            </button>
-            
-            <div className="admin-table">
-              <table>
-                <thead>
-                  <tr><th>Title</th><th>Date</th><th>Location</th><th>Actions</th></tr>
-                </thead>
-                <tbody>
-                  {events.map(event => (
-                    <tr key={event.id}>
-                      <td>{event.title}</td>
-                      <td>{event.date}</td>
-                      <td>{event.location}</td>
-                      <td>
-                        <button onClick={() => handleEdit(event)}><FaEdit /></button>
-                        <button onClick={() => deleteEvent(event.id)}><FaTrash /></button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </>
-        )}
-
-        {activeTab === 'testimonies' && (
-          <div className="admin-table">
-            <table>
-              <thead>
-                <tr><th>Name</th><th>Title</th><th>Status</th><th>Actions</th></tr>
-              </thead>
-              <tbody>
-                {testimonies.map(testimony => (
-                  <tr key={testimony.id}>
-                    <td>{testimony.name}</td>
-                    <td>{testimony.title}</td>
-                    <td>{testimony.approved ? 'Approved' : 'Pending'}</td>
-                    <td>
-                      {!testimony.approved && (
-                        <button onClick={() => approveTestimony(testimony.id)}><FaCheck /></button>
-                      )}
-                      <button onClick={() => deleteTestimony(testimony.id)}><FaTrash /></button>
-                    </td>
-                  </tr>
+        <TabPanel value={tab} index={0}>
+          <Button variant="contained" startIcon={<Plus size={16} />} onClick={() => { setShowForm(true); setEditingItem(null); }} sx={{ mb: 2 }}>
+            Add Event
+          </Button>
+          <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 3 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600, color: 'primary.main' }}>Title</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: 'primary.main' }}>Date</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: 'primary.main' }}>Location</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: 'primary.main' }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {events.map((event) => (
+                  <TableRow key={event.id}>
+                    <TableCell>{event.title}</TableCell>
+                    <TableCell>{event.date}</TableCell>
+                    <TableCell>{event.location}</TableCell>
+                    <TableCell>
+                      <IconButton onClick={() => handleEdit(event)}><Edit size={16} /></IconButton>
+                      <IconButton onClick={() => deleteEvent(event.id)}><Trash2 size={16} /></IconButton>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </TabPanel>
 
-        {activeTab === 'prayers' && (
-          <div className="admin-table">
-            <table>
-              <thead>
-                <tr><th>Name</th><th>Prayer Request</th><th>Private</th><th>Date</th><th>Action</th></tr>
-              </thead>
-              <tbody>
-                {prayerRequests.map(prayer => (
-                  <tr key={prayer.id}>
-                    <td>{prayer.name}</td>
-                    <td>{prayer.prayer.substring(0, 50)}...</td>
-                    <td>{prayer.isPrivate ? 'Yes' : 'No'}</td>
-                    <td>{new Date(prayer.date).toLocaleDateString()}</td>
-                    <td>
-                      <button onClick={() => deletePrayerRequest(prayer.id)}><FaTrash /></button>
-                    </td>
-                  </tr>
+        <TabPanel value={tab} index={1}>
+          <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 3 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600, color: 'primary.main' }}>Name</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: 'primary.main' }}>Title</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: 'primary.main' }}>Status</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: 'primary.main' }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {testimonies.map((t) => (
+                  <TableRow key={t.id}>
+                    <TableCell>{t.name}</TableCell>
+                    <TableCell>{t.title}</TableCell>
+                    <TableCell>{t.approved ? 'Approved' : 'Pending'}</TableCell>
+                    <TableCell>
+                      {!t.approved && <IconButton onClick={() => approveTestimony(t.id)}><Check size={16} /></IconButton>}
+                      <IconButton onClick={() => deleteTestimony(t.id)}><Trash2 size={16} /></IconButton>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </TabPanel>
 
-      <AnimatePresence>
-        {showForm && (
-          <motion.div
-            className="modal-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowForm(false)}
-          >
-            <motion.div
-              className="modal-content"
-              initial={{ scale: 0.9, y: 50 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 50 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h3>{editingItem ? 'Edit Event' : 'Add New Event'}</h3>
-              <form onSubmit={handleFormSubmit}>
-                <input
-                  type="text"
-                  placeholder="Event Title"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  required
-                />
-                <input
-                  type="date"
-                  value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  required
-                />
-                <input
-                  type="time"
-                  value={formData.time}
-                  onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Location"
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  required
-                />
-                <textarea
-                  placeholder="Description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Category"
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                />
-                <button type="submit" className="btn btn-primary">
-                  {editingItem ? 'Update' : 'Add'} Event
-                </button>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+        <TabPanel value={tab} index={2}>
+          <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 3 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600, color: 'primary.main' }}>Name</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: 'primary.main' }}>Prayer Request</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: 'primary.main' }}>Private</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: 'primary.main' }}>Date</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: 'primary.main' }}>Action</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {prayerRequests.map((p) => (
+                  <TableRow key={p.id}>
+                    <TableCell>{p.name}</TableCell>
+                    <TableCell>{p.prayer.substring(0, 50)}...</TableCell>
+                    <TableCell>{p.isPrivate ? 'Yes' : 'No'}</TableCell>
+                    <TableCell>{new Date(p.date).toLocaleDateString()}</TableCell>
+                    <TableCell><IconButton onClick={() => deletePrayerRequest(p.id)}><Trash2 size={16} /></IconButton></TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </TabPanel>
+
+        <Dialog open={showForm} onClose={() => setShowForm(false)} maxWidth="sm" fullWidth
+          PaperProps={{ sx: { borderRadius: 4, p: 1 } }}>
+          <DialogTitle sx={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            {editingItem ? 'Edit Event' : 'Add New Event'}
+          </DialogTitle>
+          <Box component="form" onSubmit={handleFormSubmit}>
+            <DialogContent>
+              <Stack spacing={2}>
+                <TextField fullWidth label="Event Title" value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
+                <TextField fullWidth label="Date" type="date" value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value })} InputLabelProps={{ shrink: true }} required />
+                <TextField fullWidth label="Time" type="time" value={formData.time}
+                  onChange={(e) => setFormData({ ...formData, time: e.target.value })} InputLabelProps={{ shrink: true }} required />
+                <TextField fullWidth label="Location" value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })} required />
+                <TextField fullWidth label="Description" multiline rows={3} value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })} required />
+                <TextField fullWidth label="Category" value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })} />
+              </Stack>
+            </DialogContent>
+            <DialogActions sx={{ px: 3, pb: 3 }}>
+              <Button onClick={() => setShowForm(false)}>Cancel</Button>
+              <Button type="submit" variant="contained">{editingItem ? 'Update' : 'Add'} Event</Button>
+            </DialogActions>
+          </Box>
+        </Dialog>
+      </Container>
+    </Box>
   );
 };
 

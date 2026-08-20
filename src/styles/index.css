@@ -10,8 +10,8 @@
   --white: #FFFFFF;
   --white-off: #F8FAFC;
   --white-cream: #F1F5F9;
-  --dark-bg: #0B1120;
-  --darker-bg: #070C15;
+  --dark-bg: #000000;
+  --darker-bg: #0A0A0A;
   --text-light: #FFFFFF;
   --text-offwhite: #F1F5F9;
   --text-gray: #CBD5E1;
@@ -49,7 +49,6 @@ body {
   background-color: var(--dark-bg);
   line-height: 1.6;
   overflow-x: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -748,6 +747,3 @@ section {
 }
 
 /* ========== SMOOTH TRANSITIONS ========== */
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-}

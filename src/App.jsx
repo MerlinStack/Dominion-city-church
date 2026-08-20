@@ -1,14 +1,15 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { AdminProvider } from './context/AdminContext';
-import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import GlobalSearch from './components/common/GlobalSearch';
+import ScrollToTop from './components/common/ScrollToTop';
+import { AppThemeProvider } from './theme/MuiThemeProvider';
+import { useThemeStore } from './stores/useThemeStore';
+import { Box } from '@mui/material';
 import './styles/index.css';
 
-// Lazy loaded pages
 const Home = lazy(() => import('./pages/Home'));
 const About = lazy(() => import('./pages/About'));
 const Ministries = lazy(() => import('./pages/Ministries'));
@@ -19,12 +20,22 @@ const Contact = lazy(() => import('./pages/Contact'));
 const Admin = lazy(() => import('./pages/Admin'));
 const Books = lazy(() => import('./pages/Books'));
 
-function App() {
+const App = () => {
+  const mode = useThemeStore((s) => s.mode);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.remove('dark-theme', 'light-theme');
+    root.classList.add(`${mode}-theme`);
+    localStorage.setItem('theme', mode);
+  }, [mode]);
+
   return (
-    <ThemeProvider>
-      <AdminProvider>
-        <Navbar />
-        <GlobalSearch />
+    <AppThemeProvider>
+      <ScrollToTop />
+      <Navbar />
+      <GlobalSearch />
+      <Box component="main" sx={{ minHeight: '100vh' }}>
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -38,10 +49,10 @@ function App() {
             <Route path="/books" element={<Books />} />
           </Routes>
         </Suspense>
-        <Footer />
-      </AdminProvider>
-    </ThemeProvider>
+      </Box>
+      <Footer />
+    </AppThemeProvider>
   );
-}
+};
 
 export default App;

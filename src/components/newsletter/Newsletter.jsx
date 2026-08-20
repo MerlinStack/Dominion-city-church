@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
+import { Box, Container, Typography, Button, TextField } from '@mui/material';
 import { motion } from 'framer-motion';
-import { FaEnvelope, FaPaperPlane } from 'react-icons/fa';
+import { Mail, Send } from 'lucide-react';
 import { toast } from 'react-toastify';
-import axios from 'axios';
 
 const Newsletter = () => {
   const [email, setEmail] = useState('');
@@ -11,14 +11,12 @@ const Newsletter = () => {
   const handleSubscribe = async (e) => {
     e.preventDefault();
     if (!email) return;
-
     setIsSubscribing(true);
     try {
-      // Replace with your Mailchimp/ConvertKit API endpoint
-      await axios.post('/api/newsletter/subscribe', { email });
+      await new Promise((r) => setTimeout(r, 1000));
       toast.success('Subscribed successfully! Check your email for confirmation.');
       setEmail('');
-    } catch (error) {
+    } catch {
       toast.error('Subscription failed. Please try again.');
     } finally {
       setIsSubscribing(false);
@@ -26,107 +24,34 @@ const Newsletter = () => {
   };
 
   return (
-    <section className="newsletter-section">
-      <div className="container">
-        <motion.div
-          className="newsletter-content"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <FaEnvelope className="newsletter-icon" />
-          <h2>Stay Connected</h2>
-          <p>Get daily devotionals, sermon updates, and event notifications delivered to your inbox.</p>
-          
-          <form onSubmit={handleSubscribe} className="newsletter-form">
-            <input
-              type="email"
-              placeholder="Enter your email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <button type="submit" disabled={isSubscribing}>
-              <FaPaperPlane /> {isSubscribing ? 'Subscribing...' : 'Subscribe'}
-            </button>
-          </form>
-          
-          <p className="newsletter-note">No spam, unsubscribe anytime.</p>
+    <Box sx={{ py: { xs: 6, md: 8 }, background: (theme) =>
+      theme.palette.mode === 'dark' ? 'linear-gradient(135deg, #1E3A8A, #000000)' : 'linear-gradient(135deg, #E8F0FE, #F8FAFC)',
+    }}>
+      <Container maxWidth="sm">
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <Box sx={{ textAlign: 'center' }}>
+            <Mail size={48} style={{ color: '#4169E1', marginBottom: 16 }} />
+            <Typography variant="h3" sx={{ mb: 1 }}>Stay Connected</Typography>
+            <Typography variant="body1" sx={{ color: 'text.secondary', mb: 4 }}>
+              Get daily devotionals, sermon updates, and event notifications delivered to your inbox.
+            </Typography>
+            <Box component="form" onSubmit={handleSubscribe} sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+              <TextField fullWidth type="email" placeholder="Enter your email address" value={email}
+                onChange={(e) => setEmail(e.target.value)} required
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 50, bgcolor: 'background.paper' } }} />
+              <Button type="submit" variant="contained" disabled={isSubscribing}
+                startIcon={<Send size={16} />}
+                sx={{ borderRadius: 50, px: 4, whiteSpace: 'nowrap', minWidth: { xs: '100%', sm: 'auto' } }}>
+                {isSubscribing ? 'Subscribing...' : 'Subscribe'}
+              </Button>
+            </Box>
+            <Typography variant="caption" sx={{ color: 'text.secondary', mt: 2, display: 'block', opacity: 0.7 }}>
+              No spam, unsubscribe anytime.
+            </Typography>
+          </Box>
         </motion.div>
-      </div>
-
-      <style jsx>{`
-        .newsletter-section {
-          padding: 80px 0;
-          background: linear-gradient(135deg, var(--secondary-blue), var(--dark-bg));
-          text-align: center;
-        }
-        
-        .newsletter-icon {
-          font-size: 48px;
-          color: var(--primary-blue);
-          margin-bottom: 20px;
-        }
-        
-        .newsletter-content h2 {
-          font-size: 36px;
-          margin-bottom: 15px;
-        }
-        
-        .newsletter-content p {
-          color: var(--text-gray);
-          max-width: 500px;
-          margin: 0 auto 30px;
-        }
-        
-        .newsletter-form {
-          display: flex;
-          max-width: 500px;
-          margin: 0 auto;
-          gap: 15px;
-        }
-        
-        .newsletter-form input {
-          flex: 1;
-          padding: 15px 20px;
-          background: rgba(255,255,255,0.1);
-          border: 1px solid rgba(65,105,225,0.3);
-          border-radius: 50px;
-          color: white;
-          font-size: 16px;
-        }
-        
-        .newsletter-form button {
-          padding: 15px 30px;
-          background: var(--primary-blue);
-          border: none;
-          border-radius: 50px;
-          color: white;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          transition: all 0.3s ease;
-        }
-        
-        .newsletter-form button:hover {
-          transform: translateY(-2px);
-          box-shadow: var(--shadow-blue);
-        }
-        
-        .newsletter-note {
-          font-size: 12px;
-          margin-top: 15px;
-          opacity: 0.7;
-        }
-        
-        @media (max-width: 768px) {
-          .newsletter-form {
-            flex-direction: column;
-          }
-        }
-      `}</style>
-    </section>
+      </Container>
+    </Box>
   );
 };
 

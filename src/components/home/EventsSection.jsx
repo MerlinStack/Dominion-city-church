@@ -1,110 +1,144 @@
-// src/components/home/EventsSection.jsx
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FaClock, FaMapMarkerAlt } from 'react-icons/fa';
-import './EventsSection.css';
+import { Box, Container, Typography, Button, Stack, alpha } from '@mui/material';
+import { motion } from 'framer-motion';
+import { Clock, MapPin } from 'lucide-react';
 
 const events = [
   {
-    id: 1,
-    day: 15,
-    month: 'MAR',
-    title: 'Dominion Night of Glory',
-    time: '6:00 PM',
-    location: 'Main Auditorium',
-    description: 'A special night of worship, prayer, and prophetic impartation with Dr. David Ogbueli.',
-    tags: ['All Services', 'Prayer'],
-    featured: true,
+    id: 1, day: 15, month: 'MAR', title: 'Dominion Night of Glory', time: '6:00 PM',
+    location: 'Main Auditorium', description: 'A special night of worship, prayer, and prophetic impartation with Dr. David Ogbueli.',
+    tags: ['All Services', 'Prayer'], featured: true,
   },
   {
-    id: 2,
-    day: 22,
-    month: 'MAR',
-    title: 'Workforce Empowerment Summit',
-    time: '9:00 AM',
-    location: 'Conference Hall',
-    description: 'Annual training and equipping for all workforce members across all units.',
-    tags: ['Workforce', 'Training'],
-    featured: false,
+    id: 2, day: 22, month: 'MAR', title: 'Workforce Empowerment Summit', time: '9:00 AM',
+    location: 'Conference Hall', description: 'Annual training and equipping for all workforce members across all units.',
+    tags: ['Workforce', 'Training'], featured: false,
   },
   {
-    id: 3,
-    day: 5,
-    month: 'APR',
-    title: 'The Edge Youth Conference',
-    time: '10:00 AM',
-    location: 'Youth Centre',
-    description: 'Empowering the next generation to take their place in God\'s purpose.',
-    tags: ['Youth', 'Conference'],
-    featured: false,
+    id: 3, day: 5, month: 'APR', title: 'The Edge Youth Conference', time: '10:00 AM',
+    location: 'Youth Centre', description: 'Empowering the next generation to take their place in God\'s purpose.',
+    tags: ['Youth', 'Conference'], featured: false,
   },
   {
-    id: 4,
-    day: 12,
-    month: 'APR',
-    title: 'Women of Impact Breakfast',
-    time: '8:00 AM',
-    location: 'Fellowship Hall',
-    description: 'A special gathering for women to connect, share, and be empowered.',
-    tags: ['Women', 'Fellowship'],
-    featured: false,
+    id: 4, day: 12, month: 'APR', title: 'Women of Impact Breakfast', time: '8:00 AM',
+    location: 'Fellowship Hall', description: 'A special gathering for women to connect, share, and be empowered.',
+    tags: ['Women', 'Fellowship'], featured: false,
   },
 ];
 
 const EventsSection = () => {
   return (
-    <section className="events-section" id="events">
-      <div className="container">
-        <div className="section-header">
-          <span className="section-subtitle">Stay Connected</span>
-          <h2>Upcoming Events</h2>
-        </div>
+    <Box sx={{ py: { xs: 8, md: 12 } }}>
+      <Container maxWidth="lg">
+        <Box sx={{ textAlign: 'center', mb: 6 }}>
+          <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: 4, display: 'block', mb: 1 }}>
+            Stay Connected
+          </Typography>
+          <Typography variant="h2">Upcoming Events</Typography>
+        </Box>
 
-        <div className="events-calendar">
+        <Stack spacing={2} sx={{ maxWidth: 800, mx: 'auto' }}>
           {events.map((event, index) => (
             <motion.div
               key={event.id}
-              className={`event-card ${event.featured ? 'featured' : ''}`}
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
             >
-              <div className="event-date">
-                <span className="date-day">{event.day}</span>
-                <span className="date-month">{event.month}</span>
-              </div>
-              <div className="event-details">
-                <h3>{event.title}</h3>
-                <p className="event-meta">
-                  <FaClock /> {event.time} | <FaMapMarkerAlt /> {event.location}
-                </p>
-                <p className="event-description">{event.description}</p>
-                <div className="event-tags">
-                  {event.tags.map((tag, idx) => (
-                    <span key={idx} className="tag">{tag}</span>
-                  ))}
-                </div>
-              </div>
-              <div className="event-action">
-                {event.featured ? (
-                  <Link to="/events" className="btn btn-outline">Register</Link>
-                ) : (
-                  <Link to="/events" className="btn-link">
-                    Learn More <i className="fas fa-arrow-right"></i>
-                  </Link>
-                )}
-              </div>
+              <Box
+                sx={{
+                  display: 'flex',
+                  gap: 3,
+                  p: { xs: 2, md: 3 },
+                  borderRadius: 3,
+                  bgcolor: 'background.paper',
+                  border: '1px solid',
+                  borderColor: event.featured ? 'primary.main' : 'divider',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    boxShadow: '0 10px 30px -10px rgba(65,105,225,0.3)',
+                    transform: 'translateY(-4px)',
+                  },
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  alignItems: { xs: 'flex-start', sm: 'center' },
+                }}
+              >
+                <Box
+                  sx={{
+                    textAlign: 'center',
+                    minWidth: 80,
+                    p: 1.5,
+                    borderRadius: 2,
+                    bgcolor: alpha('#4169E1', 0.1),
+                    color: 'primary.main',
+                  }}
+                >
+                  <Typography variant="h4" sx={{ fontFamily: "'Cormorant Garamond', serif", lineHeight: 1, fontWeight: 700 }}>
+                    {event.day}
+                  </Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                    {event.month}
+                  </Typography>
+                </Box>
+
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="h6" sx={{ fontFamily: "'Cormorant Garamond', serif", mb: 0.5 }}>
+                    {event.title}
+                  </Typography>
+                  <Stack direction="row" spacing={2} sx={{ mb: 0.5, '& svg': { width: 14, height: 14 } }}>
+                    <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'primary.main' }}>
+                      <Clock /> {event.time}
+                    </Typography>
+                    <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'primary.main' }}>
+                      <MapPin /> {event.location}
+                    </Typography>
+                  </Stack>
+                  <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
+                    {event.description}
+                  </Typography>
+                  <Stack direction="row" spacing={1}>
+                    {event.tags.map((tag) => (
+                      <Typography
+                        key={tag}
+                        variant="caption"
+                        sx={{
+                          px: 1.5,
+                          py: 0.3,
+                          borderRadius: 20,
+                          bgcolor: alpha('#4169E1', 0.1),
+                          color: 'primary.main',
+                          fontWeight: 600,
+                        }}
+                      >
+                        {tag}
+                      </Typography>
+                    ))}
+                  </Stack>
+                </Box>
+
+                <Box>
+                  {event.featured ? (
+                    <Button variant="contained" size="small">Register</Button>
+                  ) : (
+                    <Button component={Link} to="/events" size="small" sx={{ color: 'primary.main' }}>
+                      Learn More ?
+                    </Button>
+                  )}
+                </Box>
+              </Box>
             </motion.div>
           ))}
-        </div>
+        </Stack>
 
-        <div className="events-footer">
-          <Link to="/events" className="btn btn-primary">View All Events</Link>
-        </div>
-      </div>
-    </section>
+        <Box sx={{ textAlign: 'center', mt: 4 }}>
+          <Button component={Link} to="/events" variant="contained">
+            View All Events
+          </Button>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 

@@ -1,7 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaSearch, FaTimes } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import {
+  Box,
+  InputBase,
+  Typography,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  IconButton,
+  Chip,
+  alpha,
+} from '@mui/material';
+import { Search, X, Calendar, Video, Heart, FileText } from 'lucide-react';
 
 const GlobalSearch = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,10 +22,10 @@ const GlobalSearch = () => {
   const [allContent, setAllContent] = useState([]);
 
   useEffect(() => {
-    const events = JSON.parse(localStorage.getItem('admin_events') || '[]');
-    const sermons = JSON.parse(localStorage.getItem('admin_sermons') || '[]');
-    const testimonies = JSON.parse(localStorage.getItem('admin_testimonies') || '[]');
-    
+    const storedEvents = JSON.parse(localStorage.getItem('admin_events') || '[]');
+    const storedSermons = JSON.parse(localStorage.getItem('admin_sermons') || '[]');
+    const storedTestimonies = JSON.parse(localStorage.getItem('admin_testimonies') || '[]');
+
     const staticContent = [
       { type: 'page', title: 'Home', path: '/', content: 'Welcome to Dominion City' },
       { type: 'page', title: 'About Us', path: '/about', content: 'Our story and beliefs' },
@@ -21,13 +33,25 @@ const GlobalSearch = () => {
       { type: 'page', title: 'Events', path: '/events', content: 'Upcoming events' },
       { type: 'page', title: 'Sermons', path: '/sermons', content: 'Latest messages' },
       { type: 'page', title: 'Give', path: '/give', content: 'Support the vision' },
-      { type: 'page', title: 'Contact', path: '/contact', content: 'Get in touch' }
+      { type: 'page', title: 'Contact', path: '/contact', content: 'Get in touch' },
     ];
-    
-    const formattedEvents = events.map(e => ({ ...e, type: 'event', path: '/events' }));
-    const formattedSermons = sermons.map(s => ({ ...s, type: 'sermon', path: '/sermons' }));
-    const formattedTestimonies = testimonies.map(t => ({ ...t, type: 'testimony', path: '/' }));
-    
+
+    const formattedEvents = storedEvents.map((e) => ({
+      ...e,
+      type: 'event',
+      path: '/events',
+    }));
+    const formattedSermons = storedSermons.map((s) => ({
+      ...s,
+      type: 'sermon',
+      path: '/sermons',
+    }));
+    const formattedTestimonies = storedTestimonies.map((t) => ({
+      ...t,
+      type: 'testimony',
+      path: '/',
+    }));
+
     setAllContent([...staticContent, ...formattedEvents, ...formattedSermons, ...formattedTestimonies]);
   }, []);
 
@@ -36,201 +60,181 @@ const GlobalSearch = () => {
       setResults([]);
       return;
     }
-    
-    const searchResults = allContent.filter(item => 
-      item.title?.toLowerCase().includes(query.toLowerCase()) ||
-      item.description?.toLowerCase().includes(query.toLowerCase()) ||
-      item.content?.toLowerCase().includes(query.toLowerCase())
+    const q = query.toLowerCase();
+    const filtered = allContent.filter(
+      (item) =>
+        item.title?.toLowerCase().includes(q) ||
+        item.description?.toLowerCase().includes(q) ||
+        item.content?.toLowerCase().includes(q)
     ).slice(0, 10);
-    
-    setResults(searchResults);
+    setResults(filtered);
   }, [query, allContent]);
 
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setIsOpen((prev) => !prev);
+      }
+      if (e.key === 'Escape') setIsOpen(false);
+    },
+    []
+  );
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
   const getIcon = (type) => {
-    switch(type) {
-      case 'event': return '📅';
-      case 'sermon': return '🎥';
-      case 'testimony': return '🙏';
-      default: return '📄';
+    switch (type) {
+      case 'event':
+        return <Calendar size={20} />;
+      case 'sermon':
+        return <Video size={20} />;
+      case 'testimony':
+        return <Heart size={20} />;
+      default:
+        return <FileText size={20} />;
     }
   };
 
   return (
     <>
-      <button className="search-trigger" onClick={() => setIsOpen(true)}>
-        <FaSearch />
-      </button>
+      <IconButton
+        onClick={() => setIsOpen(true)}
+        sx={{
+          position: 'fixed',
+          right: 24,
+          bottom: 24,
+          zIndex: 1100,
+          bgcolor: 'primary.main',
+          color: 'white',
+          '&:hover': { bgcolor: 'primary.dark' },
+          width: 48,
+          height: 48,
+          boxShadow: '0 4px 15px rgba(65, 105, 225, 0.4)',
+        }}
+        aria-label="Search"
+      >
+        <Search size={20} />
+      </IconButton>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="search-modal"
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 2000,
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'center',
+              paddingTop: '80px',
+            }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
           >
             <motion.div
-              className="search-container"
+              style={{ width: '90%', maxWidth: 700 }}
               initial={{ scale: 0.9, y: -50 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: -50 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="search-header">
-                <FaSearch />
-                <input
-                  type="text"
-                  placeholder="Search sermons, events, pages..."
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  autoFocus
-                />
-                <button onClick={() => setIsOpen(false)}><FaTimes /></button>
-              </div>
-              
-              <div className="search-results">
-                {results.length > 0 ? (
-                  results.map((result, index) => (
-                    <Link
-                      key={index}
-                      to={result.path}
-                      onClick={() => setIsOpen(false)}
-                      className="search-result-item"
-                    >
-                      <span className="result-icon">{getIcon(result.type)}</span>
-                      <div className="result-content">
-                        <h4>{result.title}</h4>
-                        <p>{result.description?.substring(0, 100) || result.content?.substring(0, 100)}</p>
-                        <span className="result-type">{result.type}</span>
-                      </div>
-                    </Link>
-                  ))
-                ) : query.length >= 2 ? (
-                  <div className="no-results">No results found for "{query}"</div>
-                ) : (
-                  <div className="search-hint">Type at least 2 characters to search</div>
-                )}
-              </div>
+              <Box
+                sx={(theme) => ({
+                  bgcolor: 'background.paper',
+                  borderRadius: 3,
+                  overflow: 'hidden',
+                  border: '1px solid',
+                  borderColor: 'primary.main',
+                  backdropFilter: 'blur(20px)',
+                  boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+                })}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    p: 2,
+                    borderBottom: 1,
+                    borderColor: 'divider',
+                  }}
+                >
+                  <Search size={20} style={{ color: '#4169E1', marginRight: 12 }} />
+                  <InputBase
+                    autoFocus
+                    fullWidth
+                    placeholder="Search sermons, events, pages... (Ctrl+K)"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    sx={{ fontSize: '1.1rem' }}
+                  />
+                  <IconButton onClick={() => setIsOpen(false)} size="small">
+                    <X size={20} />
+                  </IconButton>
+                </Box>
+
+                <Box sx={{ maxHeight: 500, overflow: 'auto' }}>
+                  {results.length > 0 ? (
+                    <List disablePadding>
+                      {results.map((result, index) => (
+                        <ListItemButton
+                          key={index}
+                          component={Link}
+                          to={result.path}
+                          onClick={() => setIsOpen(false)}
+                          sx={{
+                            borderBottom: '1px solid',
+                            borderColor: 'divider',
+                            '&:hover': {
+                              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.05),
+                            },
+                          }}
+                        >
+                          <ListItemIcon sx={{ minWidth: 40, color: 'primary.main' }}>
+                            {getIcon(result.type)}
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={result.title}
+                            secondary={
+                              result.description?.substring(0, 100) ||
+                              result.content?.substring(0, 100)
+                            }
+                            secondaryTypographyProps={{ noWrap: true }}
+                          />
+                          <Chip
+                            label={result.type}
+                            size="small"
+                            sx={{
+                              textTransform: 'uppercase',
+                              fontSize: '0.7rem',
+                              fontWeight: 600,
+                              color: 'primary.main',
+                              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                            }}
+                          />
+                        </ListItemButton>
+                      ))}
+                    </List>
+                  ) : query.length >= 2 ? (
+                    <Typography sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
+                      No results found for &ldquo;{query}&rdquo;
+                    </Typography>
+                  ) : (
+                    <Typography sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
+                      Type at least 2 characters to search
+                    </Typography>
+                  )}
+                </Box>
+              </Box>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* IMPORTANT: NO "jsx" ATTRIBUTE HERE */}
-      <style>{`
-        .search-trigger {
-          background: none;
-          border: none;
-          color: var(--text-light);
-          font-size: 18px;
-          cursor: pointer;
-          padding: 8px;
-          transition: color 0.3s ease;
-        }
-        
-        .search-trigger:hover {
-          color: var(--primary-blue);
-        }
-        
-        .search-modal {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0, 0, 0, 0.9);
-          backdrop-filter: blur(5px);
-          z-index: 2000;
-          display: flex;
-          align-items: flex-start;
-          justify-content: center;
-          padding-top: 80px;
-        }
-        
-        .search-container {
-          width: 90%;
-          max-width: 700px;
-          background: var(--dark-bg);
-          border-radius: 20px;
-          overflow: hidden;
-          border: 1px solid var(--primary-blue);
-        }
-        
-        .search-header {
-          display: flex;
-          align-items: center;
-          padding: 20px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .search-header svg {
-          color: var(--primary-blue);
-          margin-right: 15px;
-        }
-        
-        .search-header input {
-          flex: 1;
-          background: none;
-          border: none;
-          color: white;
-          font-size: 18px;
-          outline: none;
-        }
-        
-        .search-header button {
-          background: none;
-          border: none;
-          color: var(--text-gray);
-          cursor: pointer;
-          font-size: 20px;
-        }
-        
-        .search-results {
-          max-height: 500px;
-          overflow-y: auto;
-        }
-        
-        .search-result-item {
-          display: flex;
-          gap: 15px;
-          padding: 15px 20px;
-          text-decoration: none;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-          transition: background 0.3s ease;
-        }
-        
-        .search-result-item:hover {
-          background: rgba(65, 105, 225, 0.1);
-        }
-        
-        .result-icon {
-          font-size: 24px;
-        }
-        
-        .result-content h4 {
-          color: var(--text-light);
-          margin-bottom: 5px;
-        }
-        
-        .result-content p {
-          color: var(--text-gray);
-          font-size: 14px;
-          margin-bottom: 5px;
-        }
-        
-        .result-type {
-          color: var(--primary-blue);
-          font-size: 12px;
-          text-transform: uppercase;
-        }
-        
-        .no-results, .search-hint {
-          padding: 40px;
-          text-align: center;
-          color: var(--text-gray);
-        }
-      `}</style>
     </>
   );
 };
