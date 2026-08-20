@@ -18,6 +18,10 @@ const queryClient = new QueryClient({
   },
 });
 
+const routerBasename = window.location.pathname.startsWith('/Dominion-city-project')
+  ? '/Dominion-city-project'
+  : '/';
+
 const root = ReactDOM.createRoot(
   document.getElementById('root')
 );
@@ -27,7 +31,7 @@ root.render(
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
 <BrowserRouter
-          basename={process.env.PUBLIC_URL}
+          basename={routerBasename}
           future={{
             v7_startTransition: true,
             v7_relativeSplatPath: true,
